@@ -45,7 +45,7 @@ namespace NeuralNetwork.test
             neuron.Connect(i3, w3);
             double tx = i1.Input*w1+i2.Input*w2+i3.Input*w3;
             double expected_activation = 1/(1 + Math.Pow(Math.E, -tx));
-            AssertClose(neuron.Activation(), expected_activation);
+            AssertCloseTo(neuron.Activation(), expected_activation);
         }
         [Test]
         public void ConnectToNeuron()
@@ -96,7 +96,7 @@ namespace NeuralNetwork.test
             neuron.Connect(n2);
             Assert.Throws(typeof (AlreadyConnectedException), () => neuron.Connect(n2));
         }
-        public static void AssertClose(double arg1, double arg2, double by=0.0001)
+        public static void AssertCloseTo(double arg1, double arg2, double by=0.0001)
         {
             Assert.Less(Math.Abs(arg1 - arg2), by);
         }

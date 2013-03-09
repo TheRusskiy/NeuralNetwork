@@ -11,7 +11,7 @@ namespace NeuralNetwork.test
     class NetworkTest
     {
         [Test]
-        public void XNORTest()
+        public void TestXNOR_Manualy()
         {
             Neuron a3_1 = new Neuron();
             Neuron a2_1 = new Neuron();
@@ -39,22 +39,53 @@ namespace NeuralNetwork.test
 
             a1_1.Input = 0;
             a1_2.Input = 0;
-            AssertClose(a3_1.Activation(), 1);
+            AssertCloseTo(a3_1.Activation(), 1);
 
             a1_1.Input = 0;
             a1_2.Input = 1;
-            AssertClose(a3_1.Activation(), 0);
+            AssertCloseTo(a3_1.Activation(), 0);
 
             a1_1.Input = 1;
             a1_2.Input = 0;
-            AssertClose(a3_1.Activation(), 0);
+            AssertCloseTo(a3_1.Activation(), 0);
 
             a1_1.Input = 1;
             a1_2.Input = 1;
-            AssertClose(a3_1.Activation(), 1);
+            AssertCloseTo(a3_1.Activation(), 1);
         }
 
-        public static void AssertClose(double arg1, double arg2, double by = 0.0001)
+        [Test]
+        public void TestNetworkCreation()
+        {
+            NNetwork network = new NNetwork(1, new int[]{1,1,1});
+        }
+
+        [Test]
+        public void TestDimensions()
+        {
+            int n_layers = 3;
+            int[] neurons_in_layers = new int[]{3, 4, 2, 1}; 
+            NNetwork network = new NNetwork(n_layers, neurons_in_layers);
+            Assert.AreEqual(network.LayerCount, n_layers);
+            Assert.AreEqual(network.NeuronsInLayers, neurons_in_layers);
+        }
+
+        [Test]
+        [Ignore]
+        public void TestGetWeightMatrix()
+        {
+            
+        }
+
+        [Test]
+        [Ignore]
+        public void TestSetWeightMatrix()
+        {
+
+        }
+
+
+        public static void AssertCloseTo(double arg1, double arg2, double by = 0.0001)
         {
             Assert.Less(Math.Abs(arg1 - arg2), by);
         }
