@@ -33,6 +33,7 @@ namespace NeuralNetwork
 
         public void Connect(INeuron neuron, double weight=0)
         {
+            AlreadyConnectedCheck(neuron);
             ExtraBiasCheck(neuron);
             neurons.Add(neuron);
             weights.Add(weight);
@@ -62,6 +63,14 @@ namespace NeuralNetwork
             if (IsBias(neuron)&&HasBias())
             {
                 throw new MoreThanOneBiasException();
+            }
+        }
+
+        private void AlreadyConnectedCheck(INeuron neuron)
+        {
+            if (neurons.Contains(neuron))
+            {
+                throw new AlreadyConnectedException();
             }
         }
 
@@ -106,6 +115,9 @@ namespace NeuralNetwork
     {
     }
     internal class MoreThanOneBiasException : Exception
+    {
+    }
+    internal class AlreadyConnectedException : Exception
     {
     }
 }

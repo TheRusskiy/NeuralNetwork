@@ -89,6 +89,13 @@ namespace NeuralNetwork.test
             input.Input=1;
             Assert.AreEqual(input.Activation(), 1);
         }
+        [Test]
+        public void DuplicateTest()
+        {
+            Neuron n2 = new Neuron();
+            neuron.Connect(n2);
+            Assert.Throws(typeof (AlreadyConnectedException), () => neuron.Connect(n2));
+        }
         public static void AssertClose(double arg1, double arg2, double by=0.0001)
         {
             Assert.Less(Math.Abs(arg1 - arg2), by);

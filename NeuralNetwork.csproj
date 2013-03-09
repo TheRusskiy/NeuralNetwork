@@ -57,6 +57,7 @@
     <Compile Include="src\INeuron.cs" />
     <Compile Include="src\InputNeuron.cs" />
     <Compile Include="src\Neuron.cs" />
+    <Compile Include="test\NetworkTest.cs" />
     <Compile Include="test\NeuronTest.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
