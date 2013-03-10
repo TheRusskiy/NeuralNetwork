@@ -27,8 +27,8 @@ namespace NeuralNetwork
         {
             neurons = new List<INeuron>();
             weights = new List<double>();
-            BiasNeuron bias = new BiasNeuron();
-            this.Connect(bias);
+//            BiasNeuron bias = new BiasNeuron();
+//            this.Connect(bias);
         }
 
         public void Connect(INeuron neuron, double weight=0)

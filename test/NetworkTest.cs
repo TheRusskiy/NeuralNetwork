@@ -14,10 +14,15 @@ namespace NeuralNetwork.test
         public void TestXNOR_Manualy()
         {
             Neuron a3_1 = new Neuron();
+            BiasNeuron bias_2 = new BiasNeuron();
+            a3_1.Connect(bias_2);
             Neuron a2_1 = new Neuron();
             a3_1.Connect(a2_1);
             Neuron a2_2 = new Neuron();
             a3_1.Connect(a2_2);
+            BiasNeuron bias_1 = new BiasNeuron();
+            a2_1.Connect(bias_1);
+            a2_2.Connect(bias_1);
             InputNeuron a1_1 = new InputNeuron();
             a2_1.Connect(a1_1);
             a2_2.Connect(a1_1);
@@ -57,33 +62,103 @@ namespace NeuralNetwork.test
         [Test]
         public void TestNetworkCreation()
         {
-            NNetwork network = new NNetwork(1, new int[]{1,1,1});
+            NNetwork network = new NNetwork(new int[]{1,1,1});
         }
 
         [Test]
         public void TestDimensions()
         {
-            int n_layers = 3;
             int[] neurons_in_layers = new int[]{3, 4, 2, 1}; 
-            NNetwork network = new NNetwork(n_layers, neurons_in_layers);
-            Assert.AreEqual(network.LayerCount, n_layers);
-            Assert.AreEqual(network.NeuronsInLayers, neurons_in_layers);
+            NNetwork network = new NNetwork(neurons_in_layers);
+            Assert.AreEqual(network.LayerCount, neurons_in_layers.Length);
+            Assert.AreEqual(network.NeuronsInLayersWithoutBias, neurons_in_layers);
         }
 
         [Test]
-        [Ignore]
-        public void TestGetWeightMatrix()
+        public void TestWeightMatrix()
         {
-            
+//            int connections_from_layer_1 = 6;
+            double[] from_l1 = new double[] {-30, 20, 20, 10, -20, -20};
+            int connections_from_layer_2 = 3;
+            double[] from_l2 = new double[] { -10, 20, 20 };
+            double[][] weights = new double[][]
+                {
+                    from_l1,
+                    from_l2
+                };
+            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            n.SetWeightMatrix(weights);
+            Assert.AreEqual(n.GetWeightMatrix(), weights);
         }
 
         [Test]
-        [Ignore]
-        public void TestSetWeightMatrix()
+        public void TestSimplestConnection()
         {
+            NNetwork n = new NNetwork(new int[] {1, 1});
+            n.SetWeightMatrix(new double[][]
+                {
+                    new double[]{1, 1},
+                    new double[]{1, 1} 
+                });
+            n.SetInput(new double[]{1});
+            var output = n.GetOutput()[0];
+            var desired = 1/(1 + Math.Pow(Math.E, -2));
+            AssertCloseTo(output, desired);
+        }
+
+        [Test]
+        public void TestInputEqualsOutput()
+        {
+            NNetwork n = new NNetwork(new int[] { 1 });
+            n.SetWeightMatrix(new double[][]
+                {
+                    new double[]{1, 1}
+                });
+            n.SetInput(new double[]{9});
+            Assert.AreEqual(n.GetOutput()[0], 9);
 
         }
 
+        [Test]
+        public void TestXNORAuto()
+        {
+            double[] from_l1 = new double[] { -30, 20, 20, 10, -20, -20 };
+            double[] from_l2 = new double[] { -10, 20, 20 };
+            double[][] weights = new double[][]
+                {
+                    from_l1,
+                    from_l2
+                };
+            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            n.SetWeightMatrix(weights);
+
+            double[] input = new double[]{0, 0};
+            n.SetInput(input);
+            double[] output = n.GetOutput();
+            AssertCloseTo(output[0], 1);
+
+            input = new double[] { 0, 1 };
+            n.SetInput(input);
+            output = n.GetOutput();
+            AssertCloseTo(output[0], 0);
+
+            input = new double[] { 1, 0 };
+            n.SetInput(input);
+            output = n.GetOutput();
+            AssertCloseTo(output[0], 0);
+
+            input = new double[] { 1, 1 };
+            n.SetInput(input);
+            output = n.GetOutput();
+            AssertCloseTo(output[0], 1);
+        }
+
+        [Test]
+        public void IllegalDimensionsTest()
+        {
+            Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] {}));
+            Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] { 1, 0}));
+        }
 
         public static void AssertCloseTo(double arg1, double arg2, double by = 0.0001)
         {

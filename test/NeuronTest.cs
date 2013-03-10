@@ -29,17 +29,24 @@ namespace NeuralNetwork.test
         [Test]
         public void ActivateNeuron()
         {
+            BiasNeuron bias = new BiasNeuron();
+            double w0 = 0;
+            neuron.Connect(bias, w0);
+
             Assert.Throws(typeof(NotConfiguredException),
                           () => neuron.Activation());
             InputNeuron i1 = new InputNeuron();
             InputNeuron i2 = new InputNeuron();
             InputNeuron i3 = new InputNeuron();
+            
             i1.Input = 1;
             i2.Input = 1;
             i3.Input = 1;
+
             double w1 = 1;
             double w2 = 1;
             double w3 = 1;
+
             neuron.Connect(i1, w1);
             neuron.Connect(i2, w2);
             neuron.Connect(i3, w3);
@@ -64,22 +71,23 @@ namespace NeuralNetwork.test
         public void WeightsChange()
         {
             neuron.Connect(new InputNeuron(), 0);
-            Assert.AreEqual(neuron.Weights[1], 0);
-            neuron.SetWeight(1, 2.0);
-            Assert.AreEqual(neuron.Weights[1], 2);
+            Assert.AreEqual(neuron.Weights[0], 0);
+            neuron.SetWeight(0, 2.0);
+            Assert.AreEqual(neuron.Weights[0], 2);
         }
 
         [Test]
         public void TestLength()
         {
-            Assert.AreEqual(neuron.Length, 1);
+            Assert.AreEqual(neuron.Length, 0);
             neuron.Connect(new Neuron());
-            Assert.AreEqual(neuron.Length, 2);
+            Assert.AreEqual(neuron.Length, 1);
         }
 
         [Test]
         public void TestOnlySingleBias()
         {
+            neuron.Connect(new BiasNeuron());
             Assert.Throws(typeof(MoreThanOneBiasException),
                           () => neuron.Connect(new BiasNeuron()));
         }
