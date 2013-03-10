@@ -9,14 +9,10 @@ namespace NeuralNetwork.src
     class NNetwork
     {
         private INeuron[][] neurons;
-//        private int[] neurons_in_layers_without_bias;
-//        private double[][] weights;
         public NNetwork(int[] neurons_in_layers_without_bias)
         {
             CheckDimensions(neurons_in_layers_without_bias);
             ConstructNetwork(neurons_in_layers_without_bias);
-//            this.layer_count = layer_count;
-//            this.neurons_in_layers_without_bias = neurons_in_layers_without_bias;
         }
 
         private void CheckDimensions(int[] neuronsInLayersWithoutBias)
@@ -46,46 +42,61 @@ namespace NeuralNetwork.src
             {
                 if (layer == layer_count-1)
                 {
-                    neurons[layer][0] = new BiasNeuron();
-                    for (int i = 1; i < neurons_in_layers_without_bias[layer]+1; i++)
-                    {
-//                        neurons[layer][i] = new Neuron();
-                        if (layer == 0)
-                        {
-                            neurons[layer][i] = new InputNeuron();
-                        }
-                        else
-                        {
-                            neurons[layer][i] = new Neuron();
-                        }
-                    }
+                    ConstructOutputLayer(neurons_in_layers_without_bias);
                 }
                 else
                 {
-                    for (int i = 0; i < neurons_in_layers_without_bias[layer]+1; i++)
+                    ConstructLayer(neurons_in_layers_without_bias, layer);
+                }
+            }
+        }
+
+        private void ConstructLayer(int[] neurons_in_layers_without_bias, int layer)
+        {
+            for (int i = 0; i < neurons_in_layers_without_bias[layer] + 1; i++)
+            {
+                INeuron nn;
+                if (i == 0)
+                {
+                    nn = new BiasNeuron();
+                }
+                else
+                {
+                    if (layer == 0)
                     {
-                        INeuron nn;
-                        if (i == 0)
-                        {
-                            nn = new BiasNeuron();
-                        }
-                        else
-                        {
-                            if (layer == 0)
-                            {
-                                nn = new InputNeuron();
-                            }
-                            else
-                            {
-                                nn = new Neuron();        
-                            }
-                        }
-                        neurons[layer][i] = nn;
-                        for (int j = 1; j < neurons_in_layers_without_bias[layer + 1]+1; j++)
-                        {
-                            neurons[layer+1][j].Connect(nn);
-                        }
+                        nn = new InputNeuron();
                     }
+                    else
+                    {
+                        nn = new Neuron();
+                    }
+                }
+                neurons[layer][i] = nn;
+                ConnectNeuronToLayer(nn, layer);
+            }
+        }
+
+        private void ConnectNeuronToLayer(INeuron nn, int layer)
+        {
+            for (int j = 1; j < neurons[layer + 1].Length; j++)
+            {
+                neurons[layer + 1][j].Connect(nn);
+            }
+        }
+
+        private void ConstructOutputLayer(int[] neurons_in_layers_without_bias)
+        {
+            int layer = neurons_in_layers_without_bias.Length - 1;
+            neurons[layer][0] = new BiasNeuron();
+            for (int i = 1; i < neurons_in_layers_without_bias[layer] + 1; i++)
+            {
+                if (layer == 0)
+                {
+                    neurons[layer][i] = new InputNeuron();
+                }
+                else
+                {
+                    neurons[layer][i] = new Neuron();
                 }
             }
         }
@@ -130,25 +141,30 @@ namespace NeuralNetwork.src
             double[][] weights=new double[neurons.Length-1][];
             for (int layer = 1; layer < LayerCount; layer++)
             {
-                int connection_count = 0;
+                int weight_in_layer = 0;
+                weights[layer-1]=new double[CountConnectionsToLayer(layer)];
                 for (int neuron = 1; neuron < neurons[layer].Length; neuron++)
                 {
-                    int neuron_length = ((Neuron) neurons[layer][neuron]).Length;
-                    connection_count += neuron_length;
-                }
-                int curr_index = 0;
-                weights[layer-1]=new double[connection_count];
-                for (int neuron = 1; neuron < neurons[layer].Length; neuron++)
-                {
-                    int neuron_length = ((Neuron) neurons[layer][neuron]).Length;
-                    for (int connection = 0; connection < neuron_length; connection++)
+                    int neuron_connections = ((Neuron) neurons[layer][neuron]).Length;
+                    for (int connection = 0; connection < neuron_connections; connection++)
                     {
-                        weights[layer-1][curr_index] = ((Neuron) neurons[layer][neuron]).Weights[connection];
-                        curr_index++;
+                        weights[layer-1][weight_in_layer] = ((Neuron) neurons[layer][neuron]).Weights[connection];
+                        weight_in_layer++;
                     }
                 }
             }
             return weights;
+        }
+
+        private int CountConnectionsToLayer(int layer)
+        {
+            int connection_count=0;
+            for (int neuron = 1; neuron < neurons[layer].Length; neuron++)
+            {
+                int neuron_length = ((Neuron) neurons[layer][neuron]).Length;
+                connection_count += neuron_length;
+            }
+            return connection_count;
         }
 
         public void SetInput(double[] input)
