@@ -17,6 +17,16 @@ namespace NeuralNetwork.src
         {
             return 1.0;
         }
+
+        public bool IsCachingActivationResults
+        {
+            get { throw new CachingIsNotSupportedException(); }
+            set { }
+        }
+        public void InvalidateActivationCache()
+        {
+            //no cache here
+        }
     }
 
     internal class CannotConnectToBiasException : Exception

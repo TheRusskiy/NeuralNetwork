@@ -29,9 +29,20 @@ namespace NeuralNetwork
             return Input;
         }
 
+        public bool IsCachingActivationResults
+        {
+            get { throw new CachingIsNotSupportedException();}
+            set { }
+        }
+
         public void Connect(INeuron neuron, double weight)
         {
             throw new CannotConnectToInputNeuronException();
+        }
+
+        public void InvalidateActivationCache()
+        {
+            //no cache here
         }
     }
 
@@ -40,6 +51,10 @@ namespace NeuralNetwork
     }
 
     internal class CannotConnectToInputNeuronException : Exception
+    {
+    }
+    
+    internal class CachingIsNotSupportedException : Exception
     {
     }
 }

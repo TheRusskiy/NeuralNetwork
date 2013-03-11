@@ -11,6 +11,7 @@ namespace NeuralNetwork
         private double desired_answer;
         private bool cache_enabled;
         private bool cache_is_outdated = true;
+        private double cached_activation;
         public INeuron[] Neurons
         {
             get { return neurons.ToArray(); }
@@ -53,9 +54,20 @@ namespace NeuralNetwork
 
         public double Activation()
         {
+            double result;
             if (!HasBias()) throw new BiasNotSetException();
             MakeSureHasNeuronsConnected();
-            return Function();
+            if (cache_enabled && !cache_is_outdated)
+            {
+                result = cached_activation;
+            }
+            else
+            {
+                result = Function();
+                cache_is_outdated = false;
+                cached_activation = result;
+            }
+            return result;
         }
 
         public void SetWeight(int index, double value)

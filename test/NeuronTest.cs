@@ -52,7 +52,7 @@ namespace NeuralNetwork.test
             neuron.Connect(i3, w3);
             double tx = i1.Input*w1+i2.Input*w2+i3.Input*w3;
             double expected_activation = 1/(1 + Math.Pow(Math.E, -tx));
-            AssertCloseTo(neuron.Activation(), expected_activation);
+            MyAssert.CloseTo(neuron.Activation(), expected_activation);
         }
         [Test]
         public void ConnectToNeuron()
@@ -116,28 +116,31 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
         public void NeuronCanHaveAutoForwardPropagationDisabled()
         {
-            /* 
-             * find a way to test functions below
-             */
-            Assert.AreEqual(neuron.IsCachingActivationResults, false);
+            neuron.Connect(new BiasNeuron());
+            InputNeuron input = new InputNeuron();
+            neuron.Connect(input, 1);
+            input.Input = 1;
+            var first_time = neuron.Activation();
             neuron.IsCachingActivationResults = true;
+            input.Input = 2;
+            var with_cache = neuron.Activation();
+            Assert.AreEqual(first_time, with_cache);
             neuron.InvalidateActivationCache();
+            var without_cache = neuron.Activation();
+            Assert.AreNotEqual(first_time, without_cache);
         }
 
         [Test]
-        [Ignore]
         public void CachingCanBeConfiguredOnConstruction()
         {
-            // default false?
+            neuron=new Neuron();
+            Assert.AreEqual(neuron.IsCachingActivationResults, false);
+            neuron = new Neuron(true);
+            Assert.AreEqual(neuron.IsCachingActivationResults, true);
         }
 
-        public static void AssertCloseTo(double arg1, double arg2, double by=0.0001)
-        {
-            Assert.Less(Math.Abs(arg1 - arg2), by);
-        }
     }
     
 }

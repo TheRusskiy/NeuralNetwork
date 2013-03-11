@@ -9,6 +9,8 @@ namespace NeuralNetwork.src
     class NNetwork
     {
         private INeuron[][] neurons;
+        private bool cache_enabled;
+
         public NNetwork(int[] neurons_in_layers_without_bias)
         {
             CheckDimensions(neurons_in_layers_without_bias);
@@ -28,6 +30,11 @@ namespace NeuralNetwork.src
                     throw new InvalidDimensionException();
                 }
             }
+        }
+
+        public INeuron[][] Neurons
+        {
+            get { return neurons; }
         }
 
         private void ConstructNetwork(int[] neurons_in_layers_without_bias)
@@ -119,6 +126,17 @@ namespace NeuralNetwork.src
             }
         }
 
+        public bool CacheEnabled
+        {
+            get { return cache_enabled; }
+            set
+            {
+                cache_enabled = value;
+                SetNeuronsCaching(cache_enabled);
+            }
+        }
+
+
         public void SetWeightMatrix(double[][][] weights)
         {
             double[][] new_weights = new double[weights.Length][];
@@ -193,6 +211,7 @@ namespace NeuralNetwork.src
             {
                 ((InputNeuron) neurons[0][i + 1]).Input = input[i];
             }
+            InvalidateNeuronsCache();
         }
 
         public double[] GetOutput()
@@ -204,6 +223,28 @@ namespace NeuralNetwork.src
                 output[i] = neurons[neurons.Length - 1][i + 1].Activation();
             }
             return output;
+        }
+
+        private void SetNeuronsCaching(bool cache_enabled)
+        {
+            for (int i = 0; i < neurons.Length; i++)
+            {
+                for (int j = 0; j < neurons[i].Length; j++ )
+                {
+                    neurons[i][j].IsCachingActivationResults = cache_enabled;
+                }
+            }
+        }
+
+        private void InvalidateNeuronsCache()
+        {
+            for (int i = 0; i < neurons.Length; i++)
+            {
+                for (int j = 0; j < neurons[i].Length; j++)
+                {
+                    neurons[i][j].InvalidateActivationCache();
+                }
+            }
         }
     }
 

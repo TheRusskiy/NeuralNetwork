@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using NUnit.Framework;
 using NeuralNetwork.src;
 
@@ -44,19 +45,19 @@ namespace NeuralNetwork.test
 
             a1_1.Input = 0;
             a1_2.Input = 0;
-            AssertCloseTo(a3_1.Activation(), 1);
+            MyAssert.CloseTo(a3_1.Activation(), 1);
 
             a1_1.Input = 0;
             a1_2.Input = 1;
-            AssertCloseTo(a3_1.Activation(), 0);
+            MyAssert.CloseTo(a3_1.Activation(), 0);
 
             a1_1.Input = 1;
             a1_2.Input = 0;
-            AssertCloseTo(a3_1.Activation(), 0);
+            MyAssert.CloseTo(a3_1.Activation(), 0);
 
             a1_1.Input = 1;
             a1_2.Input = 1;
-            AssertCloseTo(a3_1.Activation(), 1);
+            MyAssert.CloseTo(a3_1.Activation(), 1);
         }
 
         [Test]
@@ -101,7 +102,7 @@ namespace NeuralNetwork.test
             n.SetInput(new double[]{1});
             var output = n.GetOutput()[0];
             var desired = 1/(1 + Math.Pow(Math.E, -2));
-            AssertCloseTo(output, desired);
+            MyAssert.CloseTo(output, desired);
         }
 
         [Test]
@@ -120,35 +121,26 @@ namespace NeuralNetwork.test
         [Test]
         public void TestXNORAuto()
         {
-            double[] from_l1 = new double[] { -30, 20, 20, 10, -20, -20 };
-            double[] from_l2 = new double[] { -10, 20, 20 };
-            double[][] weights = new double[][]
-                {
-                    from_l1,
-                    from_l2
-                };
-            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
-            n.SetWeightMatrix(weights);
-
+            NNetwork n = XorNetwork();
             double[] input = new double[]{0, 0};
             n.SetInput(input);
             double[] output = n.GetOutput();
-            AssertCloseTo(output[0], 1);
+            MyAssert.CloseTo(output[0], 1);
 
             input = new double[] { 0, 1 };
             n.SetInput(input);
             output = n.GetOutput();
-            AssertCloseTo(output[0], 0);
+            MyAssert.CloseTo(output[0], 0);
 
             input = new double[] { 1, 0 };
             n.SetInput(input);
             output = n.GetOutput();
-            AssertCloseTo(output[0], 0);
+            MyAssert.CloseTo(output[0], 0);
 
             input = new double[] { 1, 1 };
             n.SetInput(input);
             output = n.GetOutput();
-            AssertCloseTo(output[0], 1);
+            MyAssert.CloseTo(output[0], 1);
         }
 
         [Test]
@@ -189,30 +181,43 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
         public void ActivateCachingAcrossAllNetwork()
         {
-            //or should cache by default?
-        }
-        
-        [Test]
-        [Ignore]
-        public void InvalidateCacheAcrossAllNetwork()
-        {
-            //necessary to test? 
+            NNetwork n = XorNetwork();
+            n.CacheEnabled = false;
+            n.SetInput(new double[]{0, 0});
+            long without_cache = MyAssert.MeasureMethod(() => n.GetOutput());
+            n.CacheEnabled = true;
+            long with_cache = MyAssert.MeasureMethod(() => n.GetOutput());
+            Assert.Greater(without_cache/with_cache, 1.9);
         }
 
         [Test]
-        [Ignore]
         public void IfInputNeuronsWereChangedThanBeforeCalculatingOutputInvalidateCache()
         {
-
+            NNetwork n = XorNetwork();
+            n.CacheEnabled = true;
+            n.SetInput(new double[] { 0, 0 });
+            var first = n.GetOutput();
+            n.SetInput(new double[] { 1, 0 });
+            var second = n.GetOutput();
+            Assert.AreNotEqual(first, second);
         }
 
-        public static void AssertCloseTo(double arg1, double arg2, double by = 0.0001)
+        public static NNetwork XorNetwork()
         {
-            Assert.Less(Math.Abs(arg1 - arg2), by);
+            double[] from_l1 = new double[] { -30, 20, 20, 10, -20, -20 };
+            double[] from_l2 = new double[] { -10, 20, 20 };
+            double[][] weights = new double[][]
+                {
+                    from_l1,
+                    from_l2
+                };
+            NNetwork xor_network = new NNetwork(new int[] { 2, 2, 1 });
+            xor_network.SetWeightMatrix(weights);
+            return xor_network;
         }
+
 
     }
 }

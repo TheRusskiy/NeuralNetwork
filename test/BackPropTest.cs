@@ -18,9 +18,10 @@ namespace NeuralNetwork.test
             InputNeuron input = new InputNeuron();
             n.Connect(input, 1);
             n.SetWeight(0, 1);
+            input.Input = 1;
             var desired = 1 / (1 + Math.Pow(Math.E, -2));
             n.SetAnswer(desired);
-            AssertCloseTo(n.GetDelta(),0);
+            MyAssert.CloseTo(n.GetDelta(), 0);
             /*
              1. If answer was set, than calculate like last layer, 
                 otherwise require theta and delta.  
@@ -29,10 +30,6 @@ namespace NeuralNetwork.test
              */
         }
 
-        public static void AssertCloseTo(double arg1, double arg2, double by=0.0001)
-        {
-            Assert.Less(Math.Abs(arg1 - arg2), by);
-        }
     }
     
 }
