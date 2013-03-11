@@ -8,7 +8,9 @@ namespace NeuralNetwork
     {
         private List<INeuron> neurons;
         private List<double> weights;
-
+        private double desired_answer;
+        private bool cache_enabled;
+        private bool cache_is_outdated = true;
         public INeuron[] Neurons
         {
             get { return neurons.ToArray(); }
@@ -23,8 +25,16 @@ namespace NeuralNetwork
             get { return neurons.Count; }           
         }
 
-        public Neuron()
+        public bool IsCachingActivationResults
         {
+            get { return cache_enabled; }
+            set { cache_enabled = value; }
+        }
+
+        public Neuron(bool to_cache_activation_results=false)
+        {
+            cache_enabled = to_cache_activation_results;
+            cache_is_outdated = true;
             neurons = new List<INeuron>();
             weights = new List<double>();
 //            BiasNeuron bias = new BiasNeuron();
@@ -94,7 +104,6 @@ namespace NeuralNetwork
             if (this == neuron)
             {
                 throw new CannotConnectToSelfException();
-    
             }
         }
 
@@ -119,6 +128,21 @@ namespace NeuralNetwork
                 acc += neurons[i].Activation()*weights[i];
             }
             return acc;
+        }
+
+        public void SetAnswer(double desired_answer)
+        {
+            this.desired_answer = desired_answer;
+        }
+
+        public double GetDelta()
+        {
+            return Activation() - desired_answer;
+        }
+
+        public void InvalidateActivationCache()
+        {
+            cache_is_outdated = true;
         }
     }
 

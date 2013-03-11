@@ -122,8 +122,8 @@ namespace NeuralNetwork.test
             /* 
              * find a way to test functions below
              */
-            Assert.AreEqual(neuron.CacheActivationResults, false);
-            neuron.CacheActivationResults = true;
+            Assert.AreEqual(neuron.IsCachingActivationResults, false);
+            neuron.IsCachingActivationResults = true;
             neuron.InvalidateActivationCache();
         }
 

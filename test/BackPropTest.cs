@@ -14,6 +14,7 @@ namespace NeuralNetwork.test
         public void TestCanSetAnswer()
         {
             Neuron n = new Neuron();
+            n.Connect(new BiasNeuron(), 1);
             InputNeuron input = new InputNeuron();
             n.Connect(input, 1);
             n.SetWeight(0, 1);
