@@ -33,11 +33,13 @@ namespace NeuralNetwork
 
         public void Connect(INeuron neuron, double weight=0)
         {
+            SelfCheck(neuron);
             AlreadyConnectedCheck(neuron);
             ExtraBiasCheck(neuron);
             neurons.Add(neuron);
             weights.Add(weight);
         }
+
 
         public double Activation()
         {
@@ -87,6 +89,15 @@ namespace NeuralNetwork
             }
         }
 
+        private void SelfCheck(INeuron neuron)
+        {
+            if (this == neuron)
+            {
+                throw new CannotConnectToSelfException();
+    
+            }
+        }
+
         private bool HasBias()
         {
             bool has_bias = false;
@@ -109,6 +120,10 @@ namespace NeuralNetwork
             }
             return acc;
         }
+    }
+
+    internal class CannotConnectToSelfException : Exception
+    {
     }
 
     internal class BiasNotSetException : Exception

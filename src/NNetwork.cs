@@ -119,6 +119,21 @@ namespace NeuralNetwork.src
             }
         }
 
+        public void SetWeightMatrix(double[][][] weights)
+        {
+            double[][] new_weights = new double[weights.Length][];
+            for (int layer = 0; layer < weights.Length; layer++)
+            {
+                List<double> connections = new List<double>();
+                for (int neuron = 0; neuron < weights[layer].Length; neuron++)
+                {
+                    connections.AddRange(weights[layer][neuron]);
+                }
+                new_weights[layer] = connections.ToArray();
+            }
+            SetWeightMatrix(new_weights);
+        }
+
         public void SetWeightMatrix(double[][] weights)
         {
             for (int layer = 1; layer < LayerCount; layer++)

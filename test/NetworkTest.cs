@@ -77,9 +77,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestWeightMatrix()
         {
-//            int connections_from_layer_1 = 6;
             double[] from_l1 = new double[] {-30, 20, 20, 10, -20, -20};
-            int connections_from_layer_2 = 3;
             double[] from_l2 = new double[] { -10, 20, 20 };
             double[][] weights = new double[][]
                 {
@@ -154,10 +152,61 @@ namespace NeuralNetwork.test
         }
 
         [Test]
+        public void TestAlternativeMatrix()
+        {
+            double[][] from_l1 = new double[][]
+                {
+                    new double[]{-30, 20, 20},
+                    new double[]{10, -20, -20}
+                };
+            double[][] from_l2 = new double[][]
+                {
+                    new double[]{-10, 20, 20}
+                };
+            double[][][] weights = new double[][][]
+                {
+                    from_l1,
+                    from_l2
+                };
+            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            n.SetWeightMatrix(weights);
+
+            double[] from_l1_expected = new double[] { -30, 20, 20, 10, -20, -20 };
+            double[] from_l2_expected = new double[] { -10, 20, 20 };
+            double[][] weights_expected = new double[][]
+                {
+                    from_l1_expected,
+                    from_l2_expected
+                };
+            Assert.AreEqual(weights_expected, n.GetWeightMatrix());
+        }
+
+        [Test]
         public void IllegalDimensionsTest()
         {
             Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] {}));
             Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] { 1, 0}));
+        }
+
+        [Test]
+        [Ignore]
+        public void ActivateCachingAcrossAllNetwork()
+        {
+            //or should cache by default?
+        }
+        
+        [Test]
+        [Ignore]
+        public void InvalidateCacheAcrossAllNetwork()
+        {
+            //necessary to test? 
+        }
+
+        [Test]
+        [Ignore]
+        public void IfInputNeuronsWereChangedThanBeforeCalculatingOutputInvalidateCache()
+        {
+
         }
 
         public static void AssertCloseTo(double arg1, double arg2, double by = 0.0001)

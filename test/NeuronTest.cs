@@ -91,12 +91,22 @@ namespace NeuralNetwork.test
             Assert.Throws(typeof(MoreThanOneBiasException),
                           () => neuron.Connect(new BiasNeuron()));
         }
+
+        [Test]
+        public void TestSelfConnect()
+        {
+            neuron.Connect(new BiasNeuron());
+            Assert.Throws(typeof(CannotConnectToSelfException),
+                          () => neuron.Connect(neuron));
+        }
+
         [Test]
         public void TestInputNeuron()
         {
             input.Input=1;
             Assert.AreEqual(input.Activation(), 1);
         }
+
         [Test]
         public void DuplicateTest()
         {
@@ -104,6 +114,26 @@ namespace NeuralNetwork.test
             neuron.Connect(n2);
             Assert.Throws(typeof (AlreadyConnectedException), () => neuron.Connect(n2));
         }
+
+        [Test]
+        [Ignore]
+        public void NeuronCanHaveAutoForwardPropagationDisabled()
+        {
+            /* 
+             * find a way to test functions below
+             */
+            Assert.AreEqual(neuron.CacheActivationResults, false);
+            neuron.CacheActivationResults = true;
+            neuron.InvalidateActivationCache();
+        }
+
+        [Test]
+        [Ignore]
+        public void CachingCanBeConfiguredOnConstruction()
+        {
+            // default false?
+        }
+
         public static void AssertCloseTo(double arg1, double arg2, double by=0.0001)
         {
             Assert.Less(Math.Abs(arg1 - arg2), by);

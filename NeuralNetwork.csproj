@@ -76,6 +76,7 @@
     <Compile Include="src\InputNeuron.cs" />
     <Compile Include="src\NNetwork.cs" />
     <Compile Include="src\Neuron.cs" />
+    <Compile Include="test\BackPropTest.cs" />
     <Compile Include="test\NetworkTest.cs" />
     <Compile Include="test\NeuronTest.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
