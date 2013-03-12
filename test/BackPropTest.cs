@@ -21,6 +21,7 @@ namespace NeuralNetwork.test
             input.Input = 1;
             var desired = 1 / (1 + Math.Pow(Math.E, -2));
             n.SetAnswer(desired);
+            n.PropagateBackwards();
             MyAssert.CloseTo(n.GetDelta(), 0);
             /*
              1. If answer was set, than calculate like last layer, 
@@ -37,6 +38,7 @@ namespace NeuralNetwork.test
             double[] outputs = n.GetOutput();
             double[] answers = new double[]{0.1, 0.9};
             n.SetAnswers(answers);
+            n.BackPropagate();
             double[] deltas = n.GetDeltasForLayer(3);
             for (int i = 0; i < answers.Length; i++)
             {
@@ -66,12 +68,95 @@ namespace NeuralNetwork.test
         }
 
         [Test]
+        public void LastLayerGivesDeltasAndWeightsToTheOneBefore()
+        {
+            Neuron n31 = new Neuron();
+            Neuron n32 = new Neuron();
+
+            BiasNeuron bias2 = new BiasNeuron(); ;
+            Neuron n21 = new Neuron();
+            Neuron n22 = new Neuron();
+            n31.Connect(bias2);
+            n31.Connect(n21);
+            n31.Connect(n22);
+            n32.Connect(bias2);
+            n32.Connect(n21);
+            n32.Connect(n22);
+
+            InputNeuron input = new InputNeuron();
+            BiasNeuron bias1 = new BiasNeuron();
+            n21.Connect(bias1);
+            n21.Connect(input);
+            n22.Connect(bias1);
+            n22.Connect(input);
+
+            input.Input = 1;
+            n31.SetAnswer(0.9);
+            n32.SetAnswer(0.1);
+            n31.PropagateBackwards();
+            n32.PropagateBackwards();
+            double delta31 = n31.GetDelta();
+            double delta32 = n32.GetDelta();
+            double n21_n31 = n31.Weights[1];
+            double n21_n32 = n32.Weights[1];
+            n21.PropagateBackwards();
+            double desired_delta_for_n21 = n21_n31*delta31 + n21_n32*delta32;
+            Assert.AreEqual(desired_delta_for_n21, n21.GetDelta());
+        }
+
+        [Test]
+        public void ThrowsIfPropagateTwice()
+        {
+            Neuron n31 = new Neuron();
+
+            BiasNeuron bias2 = new BiasNeuron(); ;
+            Neuron n21 = new Neuron();
+            n31.Connect(bias2);
+            n31.Connect(n21);
+
+            InputNeuron input = new InputNeuron();
+            BiasNeuron bias1 = new BiasNeuron();
+            n21.Connect(bias1);
+            n21.Connect(input);
+
+            input.Input = 1;
+            n31.SetAnswer(1);
+            n31.PropagateBackwards();
+            Assert.Throws(typeof (CannotPropagateWithEmptyAcc), () => n31.PropagateBackwards());
+        }
+
+        [Test]
+        public void ThrowsIfPropagateMidLayerWasNeverPropagatedTo()
+        {
+            Neuron n31 = new Neuron();
+
+            BiasNeuron bias2 = new BiasNeuron(); ;
+            Neuron n21 = new Neuron();
+            n31.Connect(bias2);
+            n31.Connect(n21);
+
+            InputNeuron input = new InputNeuron();
+            BiasNeuron bias1 = new BiasNeuron();
+            n21.Connect(bias1);
+            n21.Connect(input);
+
+            input.Input = 1;
+            n31.SetAnswer(1);
+//            n31.PropagateBackwards();
+//            n21.PropagateBackwards();
+            Assert.Throws(typeof(CannotPropagateWithEmptyAcc), () => n21.PropagateBackwards());
+        }
+
+        [Test]
         public void TestBackPropWithKnownValues()
         {
             NNetwork n = NetworkTest.XorNetwork();
             n.SetInput(new double[]{1, 1});
-            n.SetAnswers(new double[]{1});
+            n.SetAnswers(new double[]{0});
+            n.BackPropagate();
             double[] deltas = n.GetDeltasForLayer(2);
+            Assert.AreNotEqual(deltas[0], 0);
+            Assert.AreNotEqual(deltas[1], 0);
             MyAssert.CloseTo(deltas[0], 0, 0.001);
             MyAssert.CloseTo(deltas[1], 0, 0.001);
         }

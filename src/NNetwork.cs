@@ -293,6 +293,19 @@ namespace NeuralNetwork.src
                 last_layer[i].SetAnswer(answers[i-1]);
             }
         }
+
+        public void BackPropagate()
+        {
+            for (int layer = LayerCount-1; layer >= 1; layer--)
+            {
+                for (int neuron = 0; neuron < neurons[layer].Length; neuron++)
+                {
+//                    var a=GetDeltasForLayer(layer+1);
+                    neurons[layer][neuron].PropagateBackwards();
+                }
+            }
+
+        }
     }
 
     internal class CannotGetDeltasForThisLayer : Exception

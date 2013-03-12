@@ -8,11 +8,14 @@ namespace NeuralNetwork
     {
         private List<INeuron> neurons;
         private List<double> weights;
+        private double delta = 0;
         private double desired_answer;
         private bool cache_enabled;
         private bool cache_is_outdated = true;
         private double cached_activation;
-        private bool is_last_layer;
+        private bool propagate_like_last_layer;
+        private double weight_x_delta_acc;
+        private bool acc_empty = true;
 
         public INeuron[] Neurons
         {
@@ -147,27 +150,86 @@ namespace NeuralNetwork
         public void SetAnswer(double desired_answer)
         {
             this.desired_answer = desired_answer;
-            is_last_layer = true;
+            propagate_like_last_layer = true;
+            acc_empty = false;
         }
 
         public double GetDelta()
         {
-            double result=0;
-            if (is_last_layer)
+            if (!acc_empty)
             {
-                result = Activation() - desired_answer;
+                throw new CannotAccessDeltaBeforeBackpropHasBeenDone();
             }
-            else
-            {
-                throw new NotImplementedException();
-            }
-            return result;
+            return delta;
+        }
+
+        private double CalculateLastLayerDelta()
+        {
+            return Activation() - desired_answer;
+        }
+
+        private double CalculateMidLayerDelta()
+        {
+            double a = Activation();
+            return weight_x_delta_acc*a*(1 - a);
         }
 
         public void InvalidateActivationCache()
         {
             cache_is_outdated = true;
         }
+
+        /// <summary>
+        /// Computes and stores delta.
+        /// Add weights multiplied on self-delta to appropriate
+        /// connected neurons.
+        /// Clears self weight_x_delta accumulator.
+        /// Throws exception if self accumulator was empty =>
+        /// => can't be called twice without getting new deltas!
+        /// </summary>
+        public void PropagateBackwards()
+        {
+            delta += CalculateDelta();
+            if (acc_empty)
+            {
+                throw new CannotPropagateWithEmptyAcc();
+            }
+            acc_empty = true;
+            for (int i = 0; i < neurons.Count; i++ )
+            {
+                neurons[i].AddWeightOnDelta(weights[i]*GetDelta());
+            }
+            weight_x_delta_acc = 0;
+            
+        }
+
+        private double CalculateDelta()
+        {
+            double result = 0;
+            if (propagate_like_last_layer)
+            {
+                result = CalculateLastLayerDelta();
+            }
+            else
+            {
+                result = CalculateMidLayerDelta();
+            }
+            return result;
+        }
+
+        public void AddWeightOnDelta(double weight_x_delta)
+        {
+            weight_x_delta_acc += weight_x_delta;
+            acc_empty = false;
+        }
+    }
+
+    internal class CannotAccessDeltaBeforeBackpropHasBeenDone : Exception
+    {
+    }
+
+    internal class CannotPropagateWithEmptyAcc : Exception
+    {
     }
 
     internal class CannotConnectToSelfException : Exception

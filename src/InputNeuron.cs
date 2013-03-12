@@ -55,6 +55,16 @@ namespace NeuralNetwork
             throw new OperationNotPossibleForInputNeuronException();
         }
 
+        public void PropagateBackwards()
+        {
+            throw new OperationNotPossibleForInputNeuronException();
+        }
+
+        public void AddWeightOnDelta(double weight_x_delta)
+        {
+            //do nothing
+//            throw new OperationNotPossibleForInputNeuronException();
+        }
     }
 
     internal class NotConfiguredException : Exception

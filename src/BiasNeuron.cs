@@ -35,7 +35,19 @@ namespace NeuralNetwork.src
 
         public double GetDelta()
         {
-            throw new OperationNotPossibleForBiasException();
+            //Bias activation == 1
+            //  =>  a(1-a) == 0 
+            return 0;
+        }
+
+        public void PropagateBackwards()
+        {
+            //do nothing
+        }
+
+        public void AddWeightOnDelta(double weight_x_delta)
+        {
+            //do nothing
         }
     }
 

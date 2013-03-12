@@ -10,5 +10,7 @@
         void InvalidateActivationCache();
         void SetAnswer(double desired);
         double GetDelta();
+        void PropagateBackwards();
+        void AddWeightOnDelta(double weight_x_delta);
     }
 }
