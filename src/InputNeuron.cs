@@ -44,6 +44,17 @@ namespace NeuralNetwork
         {
             //no cache here
         }
+
+        public void SetAnswer(double desired)
+        {
+            throw new OperationNotPossibleForInputNeuronException();
+        }
+
+        public double GetDelta()
+        {
+            throw new OperationNotPossibleForInputNeuronException();
+        }
+
     }
 
     internal class NotConfiguredException : Exception
@@ -55,6 +66,10 @@ namespace NeuralNetwork
     }
     
     internal class CachingIsNotSupportedException : Exception
+    {
+    }
+
+    internal class OperationNotPossibleForInputNeuronException : Exception
     {
     }
 }

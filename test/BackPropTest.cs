@@ -29,6 +29,34 @@ namespace NeuralNetwork.test
                 sets theta+delta for every connected neuron.
              */
         }
+        [Test]
+        public void TestNetworkSetAnswerAndGetDelta()
+        {
+            NNetwork n = new NNetwork(new int[]{2, 3, 2});
+            n.SetInput(new double[]{0, 0});
+            double[] outputs = n.GetOutput();
+            double[] answers = new double[]{0.1, 0.9};
+            n.SetAnswers(answers);
+            double[] deltas = n.GetDeltasForLayer(3);
+            for (int i = 0; i < answers.Length; i++)
+            {
+                MyAssert.CloseTo(deltas[i], outputs[i]-answers[i]);
+            }
+        }
+
+        [Test]
+        public void TestRandomInit()
+        {
+            NNetwork n = new NNetwork(new int[] { 2, 3, 2 });
+            n.RandomizeWeights(seed:0);
+            var first = n.GetWeightMatrix();
+            n.RandomizeWeights(seed: 0);
+            var equal = n.GetWeightMatrix();
+            Assert.AreEqual(first, equal);
+            n.RandomizeWeights(seed: 1);
+            var not_equal = n.GetWeightMatrix();
+            Assert.AreNotEqual(first, not_equal);
+        }
 
     }
     

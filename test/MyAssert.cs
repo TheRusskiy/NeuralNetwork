@@ -25,7 +25,7 @@ namespace NeuralNetwork.test
             WarmUp(stopwatch);
             stopwatch.Reset();
             stopwatch.Start();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 300; i++)
             {
                 method.Invoke();
             }
@@ -39,7 +39,7 @@ namespace NeuralNetwork.test
             Assert.Less(Math.Abs(arg1 - arg2), by);
         }
 
-        private static void WarmUp(Stopwatch stopwatch, int warm_up_time_in_ms=100)
+        private static void WarmUp(Stopwatch stopwatch, int warm_up_time_in_ms=300)
         {
             stopwatch.Reset();
             stopwatch.Start();

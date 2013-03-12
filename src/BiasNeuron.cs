@@ -27,9 +27,24 @@ namespace NeuralNetwork.src
         {
             //no cache here
         }
+
+        public void SetAnswer(double desired)
+        {
+            throw new OperationNotPossibleForBiasException();
+        }
+
+        public double GetDelta()
+        {
+            throw new OperationNotPossibleForBiasException();
+        }
+    }
+
+    internal class OperationNotPossibleForBiasException : Exception
+    {
     }
 
     internal class CannotConnectToBiasException : Exception
     {
     }
+
 }

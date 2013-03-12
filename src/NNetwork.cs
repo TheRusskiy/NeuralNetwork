@@ -10,6 +10,7 @@ namespace NeuralNetwork.src
     {
         private INeuron[][] neurons;
         private bool cache_enabled;
+        //TODO: extract classes(e.g. matrix manipulator)
 
         public NNetwork(int[] neurons_in_layers_without_bias)
         {
@@ -244,6 +245,47 @@ namespace NeuralNetwork.src
                 {
                     neurons[i][j].InvalidateActivationCache();
                 }
+            }
+        }
+
+        public void RandomizeWeights(int seed=0, int multiplier = 10)
+        {
+            double[][] old_matrix = GetWeightMatrix();
+            for (int i = 0; i < old_matrix.Length; i++)
+            {
+                for (int j = 0; j < old_matrix[i].Length; j++)
+                {
+                    old_matrix[i][j] = RandomWeight(seed, multiplier);
+                }
+            }
+            SetWeightMatrix(old_matrix);
+        }
+
+        private double RandomWeight(int seed, int multiplier)
+        {
+            double result = new Random(seed).NextDouble();
+            result -= 0.5;
+            result *= multiplier;
+            return result;
+        }
+
+        public double[] GetDeltasForLayer(int layer_number)
+        {
+            INeuron[] layer = neurons[layer_number-1];
+            double[] deltas = new double[layer.Length];
+            for (int i = 1; i < layer.Length; i++)
+            {
+                deltas[i-1]=layer[i].GetDelta();
+            }
+            return deltas;
+        }
+
+        public void SetAnswers(double[] answers)
+        {
+            INeuron[] last_layer = neurons[LayerCount - 1];
+            for (int i = 1; i < last_layer.Length; i++)
+            {
+                last_layer[i].SetAnswer(answers[i-1]);
             }
         }
     }

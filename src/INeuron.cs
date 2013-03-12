@@ -8,5 +8,7 @@
         {get; set;}
 
         void InvalidateActivationCache();
+        void SetAnswer(double desired);
+        double GetDelta();
     }
 }
