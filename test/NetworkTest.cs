@@ -186,9 +186,9 @@ namespace NeuralNetwork.test
             NNetwork n = XorNetwork();
             n.CacheEnabled = false;
             n.SetInput(new double[]{0, 0});
-            long without_cache = MyAssert.MeasureMethod(() => n.GetOutput());
+            long without_cache = MyAssert.MeasureMethod(() => n.GetOutput(), 400);
             n.CacheEnabled = true;
-            long with_cache = MyAssert.MeasureMethod(() => n.GetOutput());
+            long with_cache = MyAssert.MeasureMethod(() => n.GetOutput(), 400);
             Assert.Greater(without_cache/with_cache, 1.9);
         }
 

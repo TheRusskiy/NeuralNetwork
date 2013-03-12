@@ -12,7 +12,7 @@ namespace NeuralNetwork.test
     class MyAssert
     {
         public delegate void TestDelegate(); //duplicates NUnit declaration
-        public static long MeasureMethod(TestDelegate method)//Delegate method, object[] args=null)
+        public static long MeasureMethod(TestDelegate method, int times_to_execute=100)//Delegate method, object[] args=null)
         {
             // Uses the second Core or Processor for the Test:
             Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2);
@@ -25,7 +25,7 @@ namespace NeuralNetwork.test
             WarmUp(stopwatch);
             stopwatch.Reset();
             stopwatch.Start();
-            for (int i = 0; i < 300; i++)
+            for (int i = 0; i < times_to_execute; i++)
             {
                 method.Invoke();
             }

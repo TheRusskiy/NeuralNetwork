@@ -12,6 +12,8 @@ namespace NeuralNetwork
         private bool cache_enabled;
         private bool cache_is_outdated = true;
         private double cached_activation;
+        private bool is_last_layer;
+
         public INeuron[] Neurons
         {
             get { return neurons.ToArray(); }
@@ -145,11 +147,21 @@ namespace NeuralNetwork
         public void SetAnswer(double desired_answer)
         {
             this.desired_answer = desired_answer;
+            is_last_layer = true;
         }
 
         public double GetDelta()
         {
-            return Activation() - desired_answer;
+            double result=0;
+            if (is_last_layer)
+            {
+                result = Activation() - desired_answer;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            return result;
         }
 
         public void InvalidateActivationCache()

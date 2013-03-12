@@ -58,6 +58,24 @@ namespace NeuralNetwork.test
             Assert.AreNotEqual(first, not_equal);
         }
 
+        [Test]
+        public void CanNotGetDeltasForFirstLayer()
+        {
+            NNetwork n = new NNetwork(new int[] { 2, 3, 2 });
+            Assert.Throws(typeof (CannotGetDeltasForThisLayer), () => n.GetDeltasForLayer(1));
+        }
+
+        [Test]
+        public void TestBackPropWithKnownValues()
+        {
+            NNetwork n = NetworkTest.XorNetwork();
+            n.SetInput(new double[]{1, 1});
+            n.SetAnswers(new double[]{1});
+            double[] deltas = n.GetDeltasForLayer(2);
+            MyAssert.CloseTo(deltas[0], 0, 0.001);
+            MyAssert.CloseTo(deltas[1], 0, 0.001);
+        }
+
     }
     
 }

@@ -16,6 +16,7 @@ namespace NeuralNetwork.src
         {
             CheckDimensions(neurons_in_layers_without_bias);
             ConstructNetwork(neurons_in_layers_without_bias);
+            SetNeuronsCaching(true);
         }
 
         private void CheckDimensions(int[] neuronsInLayersWithoutBias)
@@ -271,6 +272,10 @@ namespace NeuralNetwork.src
 
         public double[] GetDeltasForLayer(int layer_number)
         {
+            if (layer_number <= 1)
+            {
+                throw new CannotGetDeltasForThisLayer();
+            }
             INeuron[] layer = neurons[layer_number-1];
             double[] deltas = new double[layer.Length];
             for (int i = 1; i < layer.Length; i++)
@@ -288,6 +293,10 @@ namespace NeuralNetwork.src
                 last_layer[i].SetAnswer(answers[i-1]);
             }
         }
+    }
+
+    internal class CannotGetDeltasForThisLayer : Exception
+    {
     }
 
     internal class InvalidDimensionException : Exception
