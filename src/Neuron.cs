@@ -17,7 +17,7 @@ namespace NeuralNetwork
         private bool propagate_like_last_layer;
         private double weight_x_delta_acc;
         private bool acc_empty = true;
-        private int epochs_count;
+        private int iterations_count;
 
         public INeuron[] Neurons
         {
@@ -158,6 +158,11 @@ namespace NeuralNetwork
             acc_empty = false;
         }
 
+        public double GetAnswer()
+        {
+            return this.desired_answer;
+        }
+
         public double GetDelta()
         {
             if (!acc_empty)
@@ -169,7 +174,7 @@ namespace NeuralNetwork
 
         private double CalculateLastLayerDelta()
         {
-            return Activation() - desired_answer;
+            return desired_answer - Activation();
         }
 
         private double CalculateMidLayerDelta()
@@ -214,7 +219,7 @@ namespace NeuralNetwork
             {
                 weight_shifts[i] += neurons[i].Activation()*GetDelta();
             }
-            epochs_count++;
+            iterations_count++;
         }
 
         private void CreateWeightShifts()
@@ -248,15 +253,40 @@ namespace NeuralNetwork
 
         public void ApplyTraining(double lambda, double alpha)
         {
-            if (epochs_count==0) return;
-            weights[0] = weights[0]-alpha*weight_shifts[0] / epochs_count;
-            weight_shifts[0] = 0;
-            for (int i = 1; i < weights.Count; i++)
+//            double derivative;
+//            if (iterations_count==0) return;
+////            weights[0] = weights[0]-alpha*weight_shifts[0] / iterations_count;
+////            weight_shifts[0] = 0;
+//            for (int i = 0; i < weights.Count; i++)
+//            {
+//                derivative = (weight_shifts[i]/iterations_count);
+//                if (i != 0) derivative += lambda*weights[i];
+////                weights[i] = weights[i] - alpha*weight_shifts[i]/epochs_count +lambda * weights[i];
+//                weight_shifts[i] = 0;
+//                weights[i] = weights[i] + alpha*derivative;
+//            }
+//            iterations_count = 0;
+            double[] ders = Derivatives(lambda);
+            if (iterations_count == 0) return;
+            for (int i = 0; i < weights.Count; i++)
             {
-                weights[i] = weights[i] - alpha*weight_shifts[i]/epochs_count +lambda * weights[i];
                 weight_shifts[i] = 0;
+                weights[i] = weights[i] + alpha*ders[i];
             }
-            epochs_count = 0;
+
+        }
+        public double[] Derivatives(double lambda=0)
+        {
+            if (iterations_count == 0) throw new ArithmeticException("No iterations!");
+            List<double> ders = new List<double>();
+            double derivative;
+            for (int i = 0; i < weights.Count; i++)
+            {
+                derivative = (weight_shifts[i] / iterations_count);
+                if (i != 0) derivative += lambda * weights[i];
+                ders.Add(derivative);
+            }
+            return ders.ToArray();
         }
 
         public double[] GetWeightShifts()

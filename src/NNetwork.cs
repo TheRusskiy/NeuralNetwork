@@ -322,13 +322,63 @@ namespace NeuralNetwork.src
         public void ApplyTraining(double lambda=0, double alpha=1)
         {
             InvalidateNeuronsCache();
-            for (int layer = 0; layer < LayerCount; layer++)
+            for (int layer = 1; layer < LayerCount; layer++)
             {
                 for (int neuron = 0; neuron < neurons[layer].Length; neuron++)
                 {
                     neurons[layer][neuron].ApplyTraining(lambda, alpha);
                 }
             }
+        }
+
+        public double CostFunction()
+        {
+            INeuron[] last_layer = neurons[LayerCount - 1];
+            double acc = 0;
+            for (int i = 1; i < last_layer.Length; i++)
+            {
+                Neuron n = ((Neuron)last_layer[i]);
+                acc+=n.GetAnswer()*Math.Log(n.Activation()) + (1 - n.GetAnswer())*Math.Log(1 - n.Activation());
+            }
+            return acc;
+        }
+
+        public double[] Estimation(double epsilon = 0.001)
+        {
+            List<double> estimations = new List<double>();
+            double[][] wm = GetWeightMatrix();
+            for (int i = 0; i < wm.Length; i++)
+            {
+                for (int j = 0; j < wm[i].Length; j++)
+                {
+                    wm[i][j] += epsilon;
+                    this.SetWeightMatrix(wm);
+                    InvalidateNeuronsCache();
+                    double left = CostFunction();
+                    wm[i][j] -= 2*epsilon;
+                    this.SetWeightMatrix(wm);
+                    InvalidateNeuronsCache();
+                    double right = CostFunction();
+                    wm[i][j] += epsilon;
+                    this.SetWeightMatrix(wm);
+                    estimations.Add((left-right)/2*epsilon);
+                    InvalidateNeuronsCache();
+                }
+            }
+            return estimations.ToArray();
+        }
+        public double[] Derivatives()
+        {
+            List<double> ders = new List<double>();
+            for (int layer = 1; layer < LayerCount; layer++)
+            {
+                for (int neuron = 1; neuron < neurons[layer].Length; neuron++)
+                {
+                    Neuron n = (Neuron) neurons[layer][neuron];
+                    ders.AddRange(n.Derivatives());
+                }
+            }
+            return ders.ToArray();
         }
     }
 

@@ -206,6 +206,7 @@ namespace NeuralNetwork.test
         }
 
         [Test]
+        [Ignore]
         public void XnorTrainingTest()
         {
             NNetwork n = new NNetwork(new int[]{2, 3, 1});
@@ -249,9 +250,34 @@ namespace NeuralNetwork.test
             MyAssert.CloseTo(n.GetOutput()[0], answers_3[0], 0.01);
             n.SetInput(inputs_4);
             MyAssert.CloseTo(n.GetOutput()[0], answers_4[0], 0.01);
-            
         }
 
+        [Test]
+        public void TestRandomFunction()
+        {
+            NNetwork n = new NNetwork(new int[] { 2, 6, 6, 1 });
+            n.RandomizeWeights();
+            Random random = new Random();
+            double x;
+            double y;
+            double z;
+            for (int i = 0; i < 1000; i++)
+            {
+                x = random.NextDouble();
+                y = random.NextDouble();
+                z = some_function(x, y);
+                n.SetInput(new double[]{x, y});
+                n.SetAnswers(new double[]{z});
+                n.BackPropagate();
+                n.ApplyTraining(0.0001, 0.01);
+            }
+            //todo
+        } 
+
+        public static double some_function(double x, double y)
+        {
+            return x*x*y + y*y;
+        }
     }
     
 }
