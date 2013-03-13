@@ -204,6 +204,7 @@ namespace NeuralNetwork.src
 
         public void SetInput(double[] input)
         {
+            InvalidateNeuronsCache();
             if (input.Length != neurons[0].Length-1)
             {
                 throw new IndexOutOfRangeException(
@@ -213,7 +214,7 @@ namespace NeuralNetwork.src
             {
                 ((InputNeuron) neurons[0][i + 1]).Input = input[i];
             }
-            InvalidateNeuronsCache();
+            
         }
 
         public double[] GetOutput()
@@ -249,22 +250,31 @@ namespace NeuralNetwork.src
             }
         }
 
-        public void RandomizeWeights(int seed=0, int multiplier = 10)
+        public void RandomizeWeights(int seed=-1, int multiplier = 10)
         {
+            Random random;
+            if (seed >= 0)
+            {
+                random = new Random(seed);
+            }
+            else
+            {
+                random = new Random();
+            }
             double[][] old_matrix = GetWeightMatrix();
             for (int i = 0; i < old_matrix.Length; i++)
             {
                 for (int j = 0; j < old_matrix[i].Length; j++)
                 {
-                    old_matrix[i][j] = RandomWeight(seed, multiplier);
+                    old_matrix[i][j] = RandomWeight(random, multiplier);
                 }
             }
             SetWeightMatrix(old_matrix);
         }
 
-        private double RandomWeight(int seed, int multiplier)
+        private double RandomWeight(Random random, int multiplier)
         {
-            double result = new Random(seed).NextDouble();
+            double result = random.NextDouble();
             result -= 0.5;
             result *= multiplier;
             return result;
@@ -300,11 +310,25 @@ namespace NeuralNetwork.src
             {
                 for (int neuron = 0; neuron < neurons[layer].Length; neuron++)
                 {
-//                    var a=GetDeltasForLayer(layer+1);
                     neurons[layer][neuron].PropagateBackwards();
                 }
             }
 
+        }
+
+        /// <summary>
+        /// ! Invalidates Cache !
+        /// </summary>
+        public void ApplyTraining(double lambda=0, double alpha=1)
+        {
+            InvalidateNeuronsCache();
+            for (int layer = 0; layer < LayerCount; layer++)
+            {
+                for (int neuron = 0; neuron < neurons[layer].Length; neuron++)
+                {
+                    neurons[layer][neuron].ApplyTraining(lambda, alpha);
+                }
+            }
         }
     }
 

@@ -45,7 +45,12 @@ namespace NeuralNetwork.src
             //do nothing
         }
 
-        public void AddWeightOnDelta(double weight_x_delta)
+        public void AddWeightAndDelta(double weight, double delta)
+        {
+            //do nothing
+        }
+
+        public void ApplyTraining(double lambda, double alpha)
         {
             //do nothing
         }

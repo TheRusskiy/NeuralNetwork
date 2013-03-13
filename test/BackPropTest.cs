@@ -142,8 +142,6 @@ namespace NeuralNetwork.test
 
             input.Input = 1;
             n31.SetAnswer(1);
-//            n31.PropagateBackwards();
-//            n21.PropagateBackwards();
             Assert.Throws(typeof(CannotPropagateWithEmptyAcc), () => n21.PropagateBackwards());
         }
 
@@ -159,6 +157,99 @@ namespace NeuralNetwork.test
             Assert.AreNotEqual(deltas[1], 0);
             MyAssert.CloseTo(deltas[0], 0, 0.001);
             MyAssert.CloseTo(deltas[1], 0, 0.001);
+        }
+
+        [Test]
+        public void TestAccumulatesWeightShift()
+        {
+            Neuron n31 = new Neuron();
+
+            BiasNeuron bias2 = new BiasNeuron(); ;
+            Neuron n21 = new Neuron();
+            n31.Connect(bias2);
+            n31.Connect(n21);
+
+            InputNeuron input = new InputNeuron();
+            BiasNeuron bias1 = new BiasNeuron();
+            n21.Connect(bias1);
+            n21.Connect(input);
+
+            input.Input = 1;
+            n31.SetAnswer(0.9);
+
+            double[] ws = n31.GetWeightShifts();
+            double acc = ws[1];
+            Assert.AreEqual(acc, 0);
+
+            n31.PropagateBackwards();
+            ws = n31.GetWeightShifts();
+            acc = ws[1];
+            Assert.AreNotEqual(acc, 0);
+
+            n31.ApplyTraining(0, 1);
+            ws = n31.GetWeightShifts();
+            acc = ws[1];
+            Assert.AreEqual(acc, 0);
+        }
+
+        [Test]
+        public void CanApplyTrainingForWholeNetwork()
+        {
+            NNetwork n = new NNetwork(new int[] { 1, 2, 2, 1 });
+            n.SetInput(new double[]{0.3});
+            n.SetAnswers(new double[]{0.8});
+            n.BackPropagate();
+            var output_before = n.GetOutput();
+            n.ApplyTraining();
+            var output_after = n.GetOutput();
+            Assert.AreNotEqual(output_after, output_before);
+        }
+
+        [Test]
+        public void XnorTrainingTest()
+        {
+            NNetwork n = new NNetwork(new int[]{2, 3, 1});
+            n.RandomizeWeights();
+            var inputs_1 = new double[] {0, 0};
+            var answers_1 = new double[] { 1 };
+            var inputs_2 = new double[] { 0, 1 };
+            var answers_2 = new double[] { 0 };
+            var inputs_3 = new double[] { 1, 0 };
+            var answers_3 = new double[] { 0 };
+            var inputs_4 = new double[] { 1, 1 };
+            var answers_4 = new double[] { 1 };
+            for (int i = 0; i < 100; i++)
+            {
+                n.SetInput(inputs_1);
+                n.SetAnswers(answers_1);
+                n.BackPropagate();
+                n.ApplyTraining();
+
+                n.SetInput(inputs_2);
+                n.SetAnswers(answers_2);
+                n.BackPropagate();
+                n.ApplyTraining();
+
+                n.SetInput(inputs_3);
+                n.SetAnswers(answers_3);
+                n.BackPropagate();
+                n.ApplyTraining();
+
+                n.SetInput(inputs_4);
+                n.SetAnswers(answers_4);
+                n.BackPropagate();
+                n.ApplyTraining();
+            }
+//            n.ApplyTraining();
+            n.SetInput(inputs_1);
+            MyAssert.CloseTo(n.GetOutput()[0], answers_1[0], 0.01);
+            n.SetInput(inputs_2);
+            MyAssert.CloseTo(n.GetOutput()[0], answers_2[0], 0.01);
+            n.SetInput(inputs_3);
+            MyAssert.CloseTo(n.GetOutput()[0], answers_3[0], 0.01);
+            n.SetInput(inputs_4);
+            MyAssert.CloseTo(n.GetOutput()[0], answers_4[0], 0.01);
+            
         }
 
     }

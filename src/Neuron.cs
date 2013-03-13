@@ -8,6 +8,7 @@ namespace NeuralNetwork
     {
         private List<INeuron> neurons;
         private List<double> weights;
+        private List<double> weight_shifts;
         private double delta = 0;
         private double desired_answer;
         private bool cache_enabled;
@@ -16,6 +17,7 @@ namespace NeuralNetwork
         private bool propagate_like_last_layer;
         private double weight_x_delta_acc;
         private bool acc_empty = true;
+        private int epochs_count;
 
         public INeuron[] Neurons
         {
@@ -43,10 +45,11 @@ namespace NeuralNetwork
             cache_is_outdated = true;
             neurons = new List<INeuron>();
             weights = new List<double>();
-//            BiasNeuron bias = new BiasNeuron();
-//            this.Connect(bias);
         }
 
+        /// <summary>
+        /// !Deletes existing weight shifts and re-initializes them! 
+        /// </summary>
         public void Connect(INeuron neuron, double weight=0)
         {
             SelfCheck(neuron);
@@ -54,6 +57,7 @@ namespace NeuralNetwork
             ExtraBiasCheck(neuron);
             neurons.Add(neuron);
             weights.Add(weight);
+            CreateWeightShifts();
         }
 
 
@@ -186,10 +190,11 @@ namespace NeuralNetwork
         /// Clears self weight_x_delta accumulator.
         /// Throws exception if self accumulator was empty =>
         /// => can't be called twice without getting new deltas!
+        /// Updates weight shifts.
         /// </summary>
         public void PropagateBackwards()
         {
-            delta += CalculateDelta();
+            delta = CalculateDelta();
             if (acc_empty)
             {
                 throw new CannotPropagateWithEmptyAcc();
@@ -197,10 +202,28 @@ namespace NeuralNetwork
             acc_empty = true;
             for (int i = 0; i < neurons.Count; i++ )
             {
-                neurons[i].AddWeightOnDelta(weights[i]*GetDelta());
+                neurons[i].AddWeightAndDelta(weights[i], GetDelta());
             }
             weight_x_delta_acc = 0;
-            
+            CalculateWeightShifts();
+        }
+
+        private void CalculateWeightShifts()
+        {
+            for (int i = 0; i < weights.Count; i++)
+            {
+                weight_shifts[i] += neurons[i].Activation()*GetDelta();
+            }
+            epochs_count++;
+        }
+
+        private void CreateWeightShifts()
+        {
+            weight_shifts = new List<double>();
+            foreach (double weight in Weights)
+            {
+                weight_shifts.Add(0);
+            }
         }
 
         private double CalculateDelta()
@@ -217,10 +240,28 @@ namespace NeuralNetwork
             return result;
         }
 
-        public void AddWeightOnDelta(double weight_x_delta)
+        public void AddWeightAndDelta(double weight, double delta)
         {
-            weight_x_delta_acc += weight_x_delta;
+            weight_x_delta_acc += weight*delta;
             acc_empty = false;
+        }
+
+        public void ApplyTraining(double lambda, double alpha)
+        {
+            if (epochs_count==0) return;
+            weights[0] = weights[0]-alpha*weight_shifts[0] / epochs_count;
+            weight_shifts[0] = 0;
+            for (int i = 1; i < weights.Count; i++)
+            {
+                weights[i] = weights[i] - alpha*weight_shifts[i]/epochs_count +lambda * weights[i];
+                weight_shifts[i] = 0;
+            }
+            epochs_count = 0;
+        }
+
+        public double[] GetWeightShifts()
+        {
+            return weight_shifts.ToArray();
         }
     }
 

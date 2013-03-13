@@ -11,6 +11,7 @@
         void SetAnswer(double desired);
         double GetDelta();
         void PropagateBackwards();
-        void AddWeightOnDelta(double weight_x_delta);
+        void AddWeightAndDelta(double weight, double delta);
+        void ApplyTraining(double lambda, double alpha);
     }
 }
