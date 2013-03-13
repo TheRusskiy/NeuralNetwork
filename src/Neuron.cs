@@ -87,7 +87,7 @@ namespace NeuralNetwork
         private double Function()
         {
             double z = WeightsOnInputs();
-            double value = 1/(1 + Math.Pow(Math.E, -z));
+            double value = 1/(1 + Math.Exp(-z));
             return value;
         }
 
@@ -253,19 +253,6 @@ namespace NeuralNetwork
 
         public void ApplyTraining(double lambda, double alpha)
         {
-//            double derivative;
-//            if (iterations_count==0) return;
-////            weights[0] = weights[0]-alpha*weight_shifts[0] / iterations_count;
-////            weight_shifts[0] = 0;
-//            for (int i = 0; i < weights.Count; i++)
-//            {
-//                derivative = (weight_shifts[i]/iterations_count);
-//                if (i != 0) derivative += lambda*weights[i];
-////                weights[i] = weights[i] - alpha*weight_shifts[i]/epochs_count +lambda * weights[i];
-//                weight_shifts[i] = 0;
-//                weights[i] = weights[i] + alpha*derivative;
-//            }
-//            iterations_count = 0;
             double[] ders = Derivatives(lambda);
             if (iterations_count == 0) return;
             for (int i = 0; i < weights.Count; i++)
@@ -273,8 +260,8 @@ namespace NeuralNetwork
                 weight_shifts[i] = 0;
                 weights[i] = weights[i] + alpha*ders[i];
             }
-
         }
+
         public double[] Derivatives(double lambda=0)
         {
             if (iterations_count == 0) throw new ArithmeticException("No iterations!");

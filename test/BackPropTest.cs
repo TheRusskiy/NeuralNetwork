@@ -42,7 +42,7 @@ namespace NeuralNetwork.test
             double[] deltas = n.GetDeltasForLayer(3);
             for (int i = 0; i < answers.Length; i++)
             {
-                MyAssert.CloseTo(deltas[i], outputs[i]-answers[i]);
+                MyAssert.CloseTo(deltas[i], answers[i] - outputs[i]);
             }
         }
 
@@ -206,11 +206,11 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
+//        [Ignore]
         public void XnorTrainingTest()
         {
             NNetwork n = new NNetwork(new int[]{2, 3, 1});
-            n.RandomizeWeights();
+            n.RandomizeWeights(0, 20);
             var inputs_1 = new double[] {0, 0};
             var answers_1 = new double[] { 1 };
             var inputs_2 = new double[] { 0, 1 };
@@ -219,27 +219,35 @@ namespace NeuralNetwork.test
             var answers_3 = new double[] { 0 };
             var inputs_4 = new double[] { 1, 1 };
             var answers_4 = new double[] { 1 };
-            for (int i = 0; i < 100; i++)
+            double eps = 0.001;
+            double cost=eps;
+            for (int i = 0; i < 10000 && cost<=eps; i++)
             {
+                cost = 0;
                 n.SetInput(inputs_1);
                 n.SetAnswers(answers_1);
                 n.BackPropagate();
-                n.ApplyTraining();
+//                n.ApplyTraining();
+                cost += n.CostFunction();
 
                 n.SetInput(inputs_2);
                 n.SetAnswers(answers_2);
                 n.BackPropagate();
-                n.ApplyTraining();
+//                n.ApplyTraining();
+                cost += n.CostFunction();
 
                 n.SetInput(inputs_3);
                 n.SetAnswers(answers_3);
                 n.BackPropagate();
-                n.ApplyTraining();
+//                n.ApplyTraining();
+                cost += n.CostFunction();
 
                 n.SetInput(inputs_4);
                 n.SetAnswers(answers_4);
                 n.BackPropagate();
-                n.ApplyTraining();
+                cost += n.CostFunction();
+
+                n.ApplyTraining(0.001, 0.001);
             }
 //            n.ApplyTraining();
             n.SetInput(inputs_1);

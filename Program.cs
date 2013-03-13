@@ -39,11 +39,17 @@ namespace NeuralNetwork
             n.SetAnswers(new double[] { z });
             n.BackPropagate();
             double[] ders = n.Derivatives();
-            double[] ests = n.Estimation(1);
+            double[] ests = n.Estimation(0.001);
             for (int i = 0; i < ders.Length; i++)
             {
                 Console.Out.WriteLine(ders[i] + " = " + ests[i]);
             }
+        }
+
+        public static double some_function(double x, double y)
+        {
+//            return 1/(1+x*x+y*y);
+            return x*y;
         }
 
         public static void M3()
@@ -65,7 +71,7 @@ namespace NeuralNetwork
                     n.SetAnswers(new double[] { z });
                     n.BackPropagate();
                 }
-                n.ApplyTraining(0.01, 0.0001);
+                n.ApplyTraining(0.01, 0.001);
             }
             for (int i = 0; i < 10; i++)
             {
@@ -76,12 +82,6 @@ namespace NeuralNetwork
                 int digits = 3;
                 Console.Out.WriteLine(Math.Round(z, digits)+" = "+Math.Round(some_function(x, y), digits));
             }
-        }
-
-        public static double some_function(double x, double y)
-        {
-//            return 1/(1+x*x+y*y);
-            return x*y;
         }
 
         public static void M2()

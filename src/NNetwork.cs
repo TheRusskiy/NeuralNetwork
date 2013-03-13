@@ -361,7 +361,7 @@ namespace NeuralNetwork.src
                     double right = CostFunction();
                     wm[i][j] += epsilon;
                     this.SetWeightMatrix(wm);
-                    estimations.Add((left-right)/2*epsilon);
+                    estimations.Add((left-right)/(2*epsilon));
                     InvalidateNeuronsCache();
                 }
             }
