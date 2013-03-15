@@ -282,25 +282,10 @@ namespace NeuralNetwork
         }
     }
 
-    internal class CannotAccessDeltaBeforeBackpropHasBeenDone : Exception
-    {
-    }
-
-    internal class CannotPropagateWithEmptyAcc : Exception
-    {
-    }
-
-    internal class CannotConnectToSelfException : Exception
-    {
-    }
-
-    internal class BiasNotSetException : Exception
-    {
-    }
-    internal class MoreThanOneBiasException : Exception
-    {
-    }
-    internal class AlreadyConnectedException : Exception
-    {
-    }
+    internal class CannotAccessDeltaBeforeBackpropHasBeenDone : Exception{}
+    internal class CannotPropagateWithEmptyAcc : Exception{}
+    internal class CannotConnectToSelfException : Exception{}
+    internal class BiasNotSetException : Exception{}
+    internal class MoreThanOneBiasException : Exception{}
+    internal class AlreadyConnectedException : Exception{}
 }

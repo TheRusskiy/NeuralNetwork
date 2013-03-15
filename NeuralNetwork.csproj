@@ -83,6 +83,7 @@
     <Compile Include="test\MyAssert.cs" />
     <Compile Include="test\NetworkTest.cs" />
     <Compile Include="test\NeuronTest.cs" />
+    <Compile Include="test\TestDataParser.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

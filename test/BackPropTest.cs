@@ -206,61 +206,30 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-//        [Ignore]
-        public void XnorTrainingTest()
+        public void TestDerivative()
         {
-            NNetwork n = new NNetwork(new int[]{2, 3, 1});
-            n.RandomizeWeights(0, 20);
-            var inputs_1 = new double[] {0, 0};
-            var answers_1 = new double[] { 1 };
-            var inputs_2 = new double[] { 0, 1 };
-            var answers_2 = new double[] { 0 };
-            var inputs_3 = new double[] { 1, 0 };
-            var answers_3 = new double[] { 0 };
-            var inputs_4 = new double[] { 1, 1 };
-            var answers_4 = new double[] { 1 };
-            double eps = 0.001;
-            double cost=eps;
-            for (int i = 0; i < 10000 && cost<=eps; i++)
+            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            n.RandomizeWeights(-1, 10);
+            Random random = new Random();
+            double x;
+            double y;
+            double z;
+            x = random.NextDouble();
+            y = random.NextDouble();
+            z = some_function(x, y);
+            n.SetInput(new double[] { x, y });
+            n.SetAnswers(new double[] { z });
+            n.BackPropagate();
+            double[] ders = n.Derivatives();
+            double[] ests = n.Estimation(0.0001);
+            for (int i = 0; i < ders.Length; i++)
             {
-                cost = 0;
-                n.SetInput(inputs_1);
-                n.SetAnswers(answers_1);
-                n.BackPropagate();
-//                n.ApplyTraining();
-                cost += n.CostFunction();
-
-                n.SetInput(inputs_2);
-                n.SetAnswers(answers_2);
-                n.BackPropagate();
-//                n.ApplyTraining();
-                cost += n.CostFunction();
-
-                n.SetInput(inputs_3);
-                n.SetAnswers(answers_3);
-                n.BackPropagate();
-//                n.ApplyTraining();
-                cost += n.CostFunction();
-
-                n.SetInput(inputs_4);
-                n.SetAnswers(answers_4);
-                n.BackPropagate();
-                cost += n.CostFunction();
-
-                n.ApplyTraining(0.001, 0.001);
+                MyAssert.CloseTo(ders[i], ests[i], 0.00000001);
             }
-//            n.ApplyTraining();
-            n.SetInput(inputs_1);
-            MyAssert.CloseTo(n.GetOutput()[0], answers_1[0], 0.01);
-            n.SetInput(inputs_2);
-            MyAssert.CloseTo(n.GetOutput()[0], answers_2[0], 0.01);
-            n.SetInput(inputs_3);
-            MyAssert.CloseTo(n.GetOutput()[0], answers_3[0], 0.01);
-            n.SetInput(inputs_4);
-            MyAssert.CloseTo(n.GetOutput()[0], answers_4[0], 0.01);
         }
 
         [Test]
+        [Ignore]
         public void TestRandomFunction()
         {
             NNetwork n = new NNetwork(new int[] { 2, 6, 6, 1 });
@@ -280,12 +249,11 @@ namespace NeuralNetwork.test
                 n.ApplyTraining(0.0001, 0.01);
             }
             //todo
-        } 
+        }
 
         public static double some_function(double x, double y)
         {
             return x*x*y + y*y;
         }
     }
-    
 }
