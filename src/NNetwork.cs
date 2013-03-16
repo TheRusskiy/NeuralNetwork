@@ -10,6 +10,8 @@ namespace NeuralNetwork.src
     {
         private INeuron[][] neurons;
         private bool cache_enabled;
+        private double cost_acc;
+        private int iteration_count;
         //TODO: extract classes(e.g. matrix manipulator)
 
         public NNetwork(int[] neurons_in_layers_without_bias)
@@ -275,7 +277,7 @@ namespace NeuralNetwork.src
         private double RandomWeight(Random random, int multiplier)
         {
             double result = random.NextDouble();
-//            result -= 0.5;
+            result -= 0.5;
             result *= multiplier;
             return result;
         }
@@ -313,7 +315,8 @@ namespace NeuralNetwork.src
                     neurons[layer][neuron].PropagateBackwards();
                 }
             }
-
+            cost_acc += CostFunction();
+            iteration_count++;
         }
 
         /// <summary>
@@ -338,9 +341,25 @@ namespace NeuralNetwork.src
             for (int i = 1; i < last_layer.Length; i++)
             {
                 Neuron n = ((Neuron)last_layer[i]);
-                acc+=n.GetAnswer()*Math.Log(n.Activation()) + (1 - n.GetAnswer())*Math.Log(1 - n.Activation());
+                //TODO FUNCTION
+                double a = n.Activation();
+                acc += Math.Pow((n.GetAnswer() - Math.Tanh(a)),2);
+//                acc += n.GetAnswer() * Math.Log(n.Activation()) + (1 - n.GetAnswer()) * Math.Log(1 - n.Activation());
             }
             return acc;
+        }
+
+        public double AccumulatedCost()
+        {
+            //TODO FUNCTION
+//            return -cost_acc/iteration_count;
+            return cost_acc / iteration_count;
+        }
+
+        public void ResetCost()
+        {
+            cost_acc = 0;
+            iteration_count = 0;
         }
 
         public double[] Estimation(double epsilon = 0.001)

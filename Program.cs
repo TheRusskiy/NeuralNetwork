@@ -25,7 +25,7 @@ namespace NeuralNetwork
 
         public static void Main()
         {
-            Cosinus();
+            Sinus();
         }
 
         public static void M1()
@@ -41,14 +41,14 @@ namespace NeuralNetwork
         public static void Cosinus()
         {
             NNetwork network = new NNetwork(new int[] { 1, 2, 1 });
-            network.RandomizeWeights(0, 1);
+            network.RandomizeWeights(0, 10);
             double[] inputs = SinusTrainSet()[0];
             double[] outputs = SinusTrainSet()[1];
             DataNormalizer input_normalizer = new DataNormalizer(inputs);
             DataNormalizer output_normalizer = new DataNormalizer(outputs);
             double[] n_inputs = input_normalizer.GetValues();
             double[] n_outputs = output_normalizer.GetValues();
-            int max_j = 10;
+            int max_j = 10000;
             for (int j = 0; j < max_j; j++)
             {
                 for (int i = 0; i < n_inputs.Length; i++)
@@ -62,9 +62,12 @@ namespace NeuralNetwork
                         Show(n_inputs[i], n_outputs[i]);
                     }
                 }
-                network.ApplyTraining(0.0000, 0.001);
-                if (j<10 || j % (max_j / 10) == 0)
-                    Console.Out.WriteLine(network.CostFunction());
+                network.ApplyTraining(0.0000, 0.01);
+                if (j < 10 || j%(max_j/10) == 0)
+                {
+                    Console.Out.WriteLine(network.AccumulatedCost());
+                }
+                network.ResetCost();
                 
             }
             Console.Out.WriteLine("AFTER");
@@ -77,16 +80,20 @@ namespace NeuralNetwork
 
         public static void Sinus()
         {
-            NNetwork network = new NNetwork(new int[] { 1, 2, 1 });
-            network.RandomizeWeights(2, 10);
+            NNetwork network = new NNetwork(new int[] { 1, 4, 1 });
+            network.RandomizeWeights(-1, 2);
             double[] inputs = SinusTrainSet()[0];
             double[] outputs = SinusTrainSet()[1];
             DataNormalizer input_normalizer = new DataNormalizer(inputs);
             DataNormalizer output_normalizer = new DataNormalizer(outputs);
-            double[] n_inputs = input_normalizer.GetValues();
-            double[] n_outputs = output_normalizer.GetValues();
+            double[] n_inputs = inputs;// input_normalizer.GetValues();
+            double[] n_outputs = outputs;// output_normalizer.GetValues();
             int max_j = 10000;
-            for (int j = 0; j < max_j; j++)
+            double error = 1;
+            double delta = 1;
+            int j = 0;
+            for (; error > 0.01 && !(delta <= 0.0000001)||j==1; j++)
+//            for (int j = 0; j<max_j; j++)
             {
                 for (int i = 0; i < n_inputs.Length; i++)
                 {
@@ -99,10 +106,17 @@ namespace NeuralNetwork
                         Show(n_inputs[i], n_outputs[i]);
                     }
                 }
-                if (j%(max_j/10)==0)
-                    Console.Out.WriteLine(network.CostFunction());
-                network.ApplyTraining(0.0001, 0.5);
+                if (j%(max_j/10) == 0)
+                {
+//                    Console.Out.WriteLine(network.AccumulatedCost());
+                }
+                double new_cost = network.AccumulatedCost();
+                delta = error - new_cost;
+                error = new_cost;
+                network.ResetCost();
+                network.ApplyTraining(0.0000, 1);
             }
+            Console.Out.WriteLine(j+", Error: "+error+", delta: "+delta);
             Console.Out.WriteLine("AFTER");
             for (int i = 0; i < n_inputs.Length; i++)
             {

@@ -87,7 +87,9 @@ namespace NeuralNetwork
         private double Function()
         {
             double z = WeightsOnInputs();
-            double value = 1/(1 + Math.Exp(-z));
+            double value = (Math.Exp(z) - Math.Exp(-z))/(Math.Exp(z) + Math.Exp(-z));
+            //TODO FUNCTION
+            //double value = 1/(1 + Math.Exp(-z));
             return value;
         }
 
@@ -180,7 +182,9 @@ namespace NeuralNetwork
         private double CalculateMidLayerDelta()
         {
             double a = Activation();
-            return weight_x_delta_acc*a*(1 - a);
+//            return weight_x_delta_acc*a*(1 - a);
+            return weight_x_delta_acc * (1 - a*a);
+            //TODO FUNCTION
         }
 
         public void InvalidateActivationCache()
