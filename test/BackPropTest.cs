@@ -224,7 +224,7 @@ namespace NeuralNetwork.test
             double[] ests = n.Estimation(0.0001);
             for (int i = 0; i < ders.Length; i++)
             {
-                MyAssert.CloseTo(ders[i], ests[i], 0.00000001);
+                MyAssert.CloseTo(ders[i], ests[i], 0.0001);
             }
         }
 

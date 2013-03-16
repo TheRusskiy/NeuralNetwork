@@ -75,24 +75,33 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\BiasNeuron.cs" />
+    <Compile Include="src\DataNormalizer.cs" />
+    <Compile Include="src\GoogleParser.cs" />
     <Compile Include="src\INeuron.cs" />
     <Compile Include="src\InputNeuron.cs" />
+    <Compile Include="src\NetworkTrainer.cs" />
     <Compile Include="src\NNetwork.cs" />
     <Compile Include="src\Neuron.cs" />
     <Compile Include="test\BackPropTest.cs" />
     <Compile Include="test\MyAssert.cs" />
     <Compile Include="test\NetworkTest.cs" />
+    <Compile Include="test\TestNetworkTrainer.cs" />
     <Compile Include="test\NeuronTest.cs" />
+    <Compile Include="test\TestDataNormalizer.cs" />
     <Compile Include="test\TestDataParser.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="data\epam.csv" />
+    <None Include="data\goog.csv" />
+    <None Include="data\ko.csv" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

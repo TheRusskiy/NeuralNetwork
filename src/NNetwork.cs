@@ -275,7 +275,7 @@ namespace NeuralNetwork.src
         private double RandomWeight(Random random, int multiplier)
         {
             double result = random.NextDouble();
-            result -= 0.5;
+//            result -= 0.5;
             result *= multiplier;
             return result;
         }
