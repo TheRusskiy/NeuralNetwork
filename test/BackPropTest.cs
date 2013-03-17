@@ -33,7 +33,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestNetworkSetAnswerAndGetDelta()
         {
-            NNetwork n = new NNetwork(new int[]{2, 3, 2});
+            NNetwork n = NNetwork.SigmoidNetwork(new int[]{2, 3, 2});
             n.SetInput(new double[]{0, 0});
             double[] outputs = n.GetOutput();
             double[] answers = new double[]{0.1, 0.9};
@@ -49,7 +49,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestRandomInit()
         {
-            NNetwork n = new NNetwork(new int[] { 2, 3, 2 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 3, 2 });
             n.RandomizeWeights(seed:0);
             var first = n.GetWeightMatrix();
             n.RandomizeWeights(seed: 0);
@@ -63,7 +63,7 @@ namespace NeuralNetwork.test
         [Test]
         public void CanNotGetDeltasForFirstLayer()
         {
-            NNetwork n = new NNetwork(new int[] { 2, 3, 2 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 3, 2 });
             Assert.Throws(typeof (CannotGetDeltasForThisLayer), () => n.GetDeltasForLayer(1));
         }
 
@@ -195,7 +195,7 @@ namespace NeuralNetwork.test
         [Test]
         public void CanApplyTrainingForWholeNetwork()
         {
-            NNetwork n = new NNetwork(new int[] { 1, 2, 2, 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 1, 2, 2, 1 });
             n.SetInput(new double[]{0.3});
             n.SetAnswers(new double[]{0.8});
             n.BackPropagate();
@@ -208,7 +208,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestDerivative()
         {
-            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 2, 1 });
             n.RandomizeWeights(-1, 10);
             Random random = new Random();
             double x;
@@ -229,11 +229,10 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
         public void TestTanhDerivative()
         {
-            //TODO  make it tahn
-            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            // SO-SO test =(
+            NNetwork n = NNetwork.HyperbolicNetwork(new int[] { 2, 2, 1 });
             n.RandomizeWeights(-1, 10);
             Random random = new Random();
             double x;
@@ -247,9 +246,10 @@ namespace NeuralNetwork.test
             n.BackPropagate();
             double[] ders = n.Derivatives();
             double[] ests = n.Estimation(0.0001);
+            var koeff = ests[0]/ders[0];
             for (int i = 0; i < ders.Length; i++)
             {
-                MyAssert.CloseTo(ders[i], ests[i], 0.0001);
+                MyAssert.CloseTo(ests[i]/ders[i], koeff, 0.000001);
             }
         }
 
@@ -257,7 +257,7 @@ namespace NeuralNetwork.test
         [Ignore]
         public void TestRandomFunction()
         {
-            NNetwork n = new NNetwork(new int[] { 2, 6, 6, 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 6, 6, 1 });
             n.RandomizeWeights();
             Random random = new Random();
             double x;

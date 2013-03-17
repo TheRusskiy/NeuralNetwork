@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NeuralNetwork.src;
+using NeuralNetwork.test;
 
 namespace NeuralNetwork
 {
@@ -26,6 +27,60 @@ namespace NeuralNetwork
         public static void Main()
         {
 //            Sinus();
+//            TestTanhLearningOnSinus();
+//            TestTanhDerivative();
+        }
+
+        public static void TestTanhDerivative()
+        {
+            NNetwork n = NNetwork.HyperbolicNetwork(new int[] { 2, 2, 1 });
+            n.RandomizeWeights(-1, 10);
+            Random random = new Random();
+            double x;
+            double y;
+            double z;
+            x = random.NextDouble();
+            y = random.NextDouble();
+            z = some_function(x, y);
+            n.SetInput(new double[] { x, y });
+            n.SetAnswers(new double[] { z });
+            n.BackPropagate();
+            double[] ders = n.Derivatives();
+            double[] ests = n.Estimation(0.0001);
+            for (int i = 0; i < ders.Length; i++)
+            {
+                Show(new[]{ders[i], ests[i], ests[i]/ders[i]});
+            }
+        }
+
+        public static void TestTanhLearningOnSinus()
+        {
+            NNetwork network = NNetwork.HyperbolicNetwork(new int[] { 1, 2, 1 });
+            network.RandomizeWeights(1, 2);
+            NetworkTrainer trainer = new NetworkTrainer(network);
+            double[][] inputs = SinusTrainSet()[0];
+            double[][] outputs = SinusTrainSet()[1];
+            double error = 1;
+            double delta = 1;
+            int j = 0;
+            for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
+            {
+                trainer.TrainCalculation(inputs, outputs);
+                double new_cost = trainer.GetError();
+                delta = error - new_cost;
+                error = new_cost;
+            }
+            double[][] input_test = SinusTrainSet(20)[0];
+            double[][] output_test = SinusTrainSet(20)[1];
+            trainer.IsLearning = false;
+            trainer.TrainCalculation(input_test, output_test);
+            error = trainer.GetError();
+            Console.Out.WriteLine(error);
+            for (int i = 0; i < input_test.Length; i++ )
+            {
+                network.SetInput(input_test[i]);
+                Show(new []{input_test[i][0], network.GetOutput()[0], Math.Sin(input_test[i][0])});
+            }
         }
 
 //        public static void M1()
@@ -127,28 +182,36 @@ namespace NeuralNetwork
 //            }
 //        }
 
-        private static void Show(double x1, double x2)
+        private static void Show(double[] values, int digits = 4)
         {
-            Console.Out.WriteLine(
-            Math.Round(x1, 3) +
-            ": " +
-            Math.Round(x2, 3)
-            );
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] >= 0)
+                {
+                    Console.Out.Write(" {0,-" + (digits + 2) + "} : ", Math.Round(values[i], digits));
+                }
+                else
+                {
+                    Console.Out.Write("{0,-" + (digits + 3) + "} : ", Math.Round(values[i], digits));
+                }
+                
+            }
+            Console.Out.WriteLine("");
         }
 
-        private static double[][] SinusTrainSet()
+        private static double[][][] SinusTrainSet(int size=9)
         {
-            int n = 9;
-            double[] inputs = new double[n];
-            double[] outputs = new double[n];
+            double[][] inputs = new double[size][];
+            double[][] outputs = new double[size][];
             double pi = Math.PI;
-            for (int i = 0; i < n; i++)
+            double step = pi/(double)size;
+            for (int i = 0; i < size; i++)
             {
-                var value = -pi / 2 + i * pi / 8;
-                inputs[i] = value;
-                outputs[i] = Math.Sin(value);
+                var value = -pi / 2 + i * step;
+                inputs[i] = new double[]{value};
+                outputs[i] = new double[]{Math.Sin(value)};
             }
-            return new double[][] { inputs, outputs };
+            return new double[][][] { inputs, outputs };
         }
 
         private static double[][] CosinusTrainSet()
@@ -164,6 +227,11 @@ namespace NeuralNetwork
                 outputs[i] = Math.Cos(value);
             }
             return new double[][] { inputs, outputs };
+        }
+
+        public static double some_function(double x, double y)
+        {
+            return x * x * y + y * y;
         }
     }
 }

@@ -8,12 +8,23 @@ namespace NeuralNetwork.src
 {
     class NNetwork
     {
+        private bool is_sigmoid;
+        public static NNetwork SigmoidNetwork(int[] neurons_in_layers_without_bias)
+        {
+            return new NNetwork(neurons_in_layers_without_bias, "sigmoid");
+        }
+        public static NNetwork HyperbolicNetwork(int[] neurons_in_layers_without_bias)
+        {
+            return new NNetwork(neurons_in_layers_without_bias, "hyperbolic");
+        }
+
         private INeuron[][] neurons;
         private bool cache_enabled;
         //TODO: extract classes(e.g. matrix manipulator)
 
-        public NNetwork(int[] neurons_in_layers_without_bias)
+        private NNetwork(int[] neurons_in_layers_without_bias, string type)
         {
+            is_sigmoid = type.Equals("sigmoid");
             CheckDimensions(neurons_in_layers_without_bias);
             ConstructNetwork(neurons_in_layers_without_bias);
             SetNeuronsCaching(true);
@@ -77,7 +88,7 @@ namespace NeuralNetwork.src
                     }
                     else
                     {
-                        nn = new Neuron();
+                        nn = CreateNeuron();
                     }
                 }
                 neurons[layer][i] = nn;
@@ -105,7 +116,7 @@ namespace NeuralNetwork.src
                 }
                 else
                 {
-                    neurons[layer][i] = new Neuron();
+                    neurons[layer][i] = CreateNeuron();
                 }
             }
         }
@@ -278,6 +289,18 @@ namespace NeuralNetwork.src
             result -= 0.5;
             result *= multiplier;
             return result;
+        }
+
+        private Neuron CreateNeuron()
+        {
+            if (is_sigmoid)
+            {
+                return new Neuron();
+            }
+            else
+            {
+                return new TanhNeuron();
+            }
         }
 
         public double[] GetDeltasForLayer(int layer_number)

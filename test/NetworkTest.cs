@@ -63,14 +63,14 @@ namespace NeuralNetwork.test
         [Test]
         public void TestNetworkCreation()
         {
-            NNetwork network = new NNetwork(new int[]{1,1,1});
+            NNetwork network = NNetwork.SigmoidNetwork(new int[]{1,1,1});
         }
 
         [Test]
         public void TestDimensions()
         {
             int[] neurons_in_layers = new int[]{3, 4, 2, 1}; 
-            NNetwork network = new NNetwork(neurons_in_layers);
+            NNetwork network = NNetwork.SigmoidNetwork(neurons_in_layers);
             Assert.AreEqual(network.LayerCount, neurons_in_layers.Length);
             Assert.AreEqual(network.NeuronsInLayersWithoutBias, neurons_in_layers);
         }
@@ -85,7 +85,7 @@ namespace NeuralNetwork.test
                     from_l1,
                     from_l2
                 };
-            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 2, 1 });
             n.SetWeightMatrix(weights);
             Assert.AreEqual(n.GetWeightMatrix(), weights);
         }
@@ -93,7 +93,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestSimplestConnection()
         {
-            NNetwork n = new NNetwork(new int[] {1, 1});
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] {1, 1});
             n.SetWeightMatrix(new double[][]
                 {
                     new double[]{1, 1},
@@ -108,7 +108,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestInputEqualsOutput()
         {
-            NNetwork n = new NNetwork(new int[] { 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 1 });
             n.SetWeightMatrix(new double[][]
                 {
                     new double[]{1, 1}
@@ -160,7 +160,7 @@ namespace NeuralNetwork.test
                     from_l1,
                     from_l2
                 };
-            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 2, 1 });
             n.SetWeightMatrix(weights);
 
             double[] from_l1_expected = new double[] { -30, 20, 20, 10, -20, -20 };
@@ -176,8 +176,8 @@ namespace NeuralNetwork.test
         [Test]
         public void IllegalDimensionsTest()
         {
-            Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] {}));
-            Assert.Throws(typeof(InvalidDimensionException), () => new NNetwork(new int[] { 1, 0}));
+            Assert.Throws(typeof(InvalidDimensionException), () => NNetwork.SigmoidNetwork(new int[] {}));
+            Assert.Throws(typeof(InvalidDimensionException), () => NNetwork.SigmoidNetwork(new int[] { 1, 0}));
         }
 
         [Test]
@@ -205,11 +205,11 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
         public void TestTanhNetwork()
         {
-            NNetwork n = new NNetwork(new int[]{2,4,4,2});
-            //TODO factory!
+            NNetwork n = NNetwork.HyperbolicNetwork(new int[]{2,4,4,2});
+            INeuron[][] neurons = n.Neurons;
+            Assert.IsInstanceOf(typeof(TanhNeuron), neurons[2][2]);
         }
 
         public static NNetwork XorNetwork()
@@ -221,7 +221,7 @@ namespace NeuralNetwork.test
                     from_l1,
                     from_l2
                 };
-            NNetwork xor_network = new NNetwork(new int[] { 2, 2, 1 });
+            NNetwork xor_network = NNetwork.SigmoidNetwork(new int[] { 2, 2, 1 });
             xor_network.SetWeightMatrix(weights);
             return xor_network;
         }

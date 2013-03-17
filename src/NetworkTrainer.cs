@@ -11,9 +11,17 @@ namespace NeuralNetwork.src
         private NNetwork network;
         private double cost_acc;
         private int iteration_count;
+        private bool _isLearning = true;
+
         public NetworkTrainer(NNetwork network)
         {
             this.network = network;
+        }
+
+        public bool IsLearning
+        {
+            get { return _isLearning; }
+            set { _isLearning = value; }
         }
 
         public void TrainPrediction(double[] train_set, double lambda=0, double alpha=1)
@@ -29,7 +37,7 @@ namespace NeuralNetwork.src
                 CalculateError();
                 network.BackPropagate();
             }
-            network.ApplyTraining(lambda, alpha);
+            if (_isLearning) network.ApplyTraining(lambda, alpha);
         }
 
         private double[] GetArrayRange(double[] array, int from, int to_exclusive)
@@ -46,6 +54,21 @@ namespace NeuralNetwork.src
         {
             if (iteration_count == 0) throw new NoErrorInfoYetException();
             return -cost_acc/iteration_count;
+        }
+
+        public void TrainCalculation(double[][] inputs, double[][] outputs, double lambda = 0, double alpha = 1)
+        {
+            //TODO assert all types of dimensions
+            cost_acc = 0;
+            iteration_count = 0;
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                network.SetInput(inputs[i]);
+                network.SetAnswers(outputs[i]);
+                CalculateError();
+                network.BackPropagate();
+            }
+            if (_isLearning) network.ApplyTraining(lambda, alpha);
         }
     }
 

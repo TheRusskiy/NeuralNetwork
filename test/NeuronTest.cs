@@ -172,11 +172,44 @@ namespace NeuralNetwork.test
         }
 
         [Test]
-        [Ignore]
-        public void TestTahnLearningOnSinus()
+        public void TestTanhLearningOnSinus()
         {
-            
+            NNetwork network = NNetwork.HyperbolicNetwork(new int[] { 1, 2, 1 });
+            network.RandomizeWeights(1, 2);
+            NetworkTrainer trainer = new NetworkTrainer(network);
+            double[][] inputs = SinusTrainSet()[0];
+            double[][] outputs = SinusTrainSet()[1];
+            double error = 1;
+            double delta = 1;
+            int j = 0;
+            for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
+            {
+                trainer.TrainCalculation(inputs, outputs);
+                double new_cost = trainer.GetError();
+                delta = error - new_cost;
+                error = new_cost;
+            }
+            double[][] input_test = SinusTrainSet(20)[0];
+            double[][] output_test = SinusTrainSet(20)[1];
+            trainer.IsLearning = false;
+            trainer.TrainCalculation(input_test, output_test);
+            error = trainer.GetError();
+            Assert.Less(error, 0.53);
+        }
+
+        private static double[][][] SinusTrainSet(int size = 9)
+        {
+            double[][] inputs = new double[size][];
+            double[][] outputs = new double[size][];
+            double pi = Math.PI;
+            double step = pi / (double)size;
+            for (int i = 0; i < size; i++)
+            {
+                var value = -pi / 2 + i * step;
+                inputs[i] = new double[] { value };
+                outputs[i] = new double[] { Math.Sin(value) };
+            }
+            return new double[][][] { inputs, outputs };
         }
     }
-    
 }

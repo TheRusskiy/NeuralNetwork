@@ -13,7 +13,7 @@ namespace NeuralNetwork.test
         [Test]
         public void CreateTrainer()
         {
-            NNetwork network = new NNetwork(new int[]{1, 2, 1});
+            NNetwork network = NNetwork.SigmoidNetwork(new int[]{1, 2, 1});
             NetworkTrainer trainer = new NetworkTrainer(network);
         }
 
@@ -21,7 +21,7 @@ namespace NeuralNetwork.test
         [Ignore]
         public void TrainPrediction()
         {
-            NNetwork network = new NNetwork(new int[] { 5, 2, 2 });
+            NNetwork network = NNetwork.SigmoidNetwork(new int[] { 5, 2, 2 });
             NetworkTrainer trainer = new NetworkTrainer(network);
             double[] train_set = new double[] {};
             trainer.TrainPrediction(train_set);
@@ -31,7 +31,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestCostFunctionAccumulation()
         {
-            NNetwork network = new NNetwork(new int[] { 2, 4, 3 });
+            NNetwork network = NNetwork.SigmoidNetwork(new int[] { 2, 4, 3 });
             NetworkTrainer trainer = new NetworkTrainer(network);
             double[] train_set = new[] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1};
             Assert.Throws(typeof (NoErrorInfoYetException), () => trainer.GetError());
