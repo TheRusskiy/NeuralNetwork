@@ -8,12 +8,23 @@ namespace NeuralNetwork.src
 {
     class DataNormalizer
     {
+        public static DataNormalizer SigmoidNormalizer(double[] initial_values)
+        {
+            return new DataNormalizer(initial_values);
+        }
+
+        public static DataNormalizer HyperbolicNormalizer(double[] initial_values)
+        {
+            return new HyperbolicNormalizer(initial_values);
+        }
+
         public const double SAFE_KOEFF = 1.1;
-        private double min;
-        private double max;
+        protected double min;
+        protected double max;
         private double[] initial_values;
         private double[] values;
-        public DataNormalizer(double[] initial_values)
+
+        protected DataNormalizer(double[] initial_values)
         {
             if (initial_values==null || initial_values.Length == 0) throw new EmptyDataSetException();
             this.initial_values = initial_values;
@@ -30,7 +41,7 @@ namespace NeuralNetwork.src
             }
         }
 
-        private double NormalizeValue(double value)
+        protected virtual double NormalizeValue(double value)
         {
             double result = (value - min)/(max - min);
             return result;
@@ -70,10 +81,27 @@ namespace NeuralNetwork.src
             return values;
         }
 
-        public double Denormalize(double value)
+        public virtual double Denormalize(double value)
         {
             if (value > 1 || value < 0) throw new ValueOutOfBoundsException(); 
             double result = min + value*(max - min);
+            return result;
+        }
+    }
+    internal class HyperbolicNormalizer : DataNormalizer
+    {
+        protected internal HyperbolicNormalizer(double[] initial_values) : base(initial_values){}
+
+        protected override double NormalizeValue(double value)
+        {
+            double result = 2 * (value - min) / (max - min) - 1;
+            return result;
+        }
+
+        public override double Denormalize(double value)
+        {
+            if (value > 1 || value < -1) throw new ValueOutOfBoundsException();
+            double result = (value+1)*(max-min)/2+min;
             return result;
         }
     }

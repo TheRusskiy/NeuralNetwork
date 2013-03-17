@@ -249,31 +249,8 @@ namespace NeuralNetwork.test
             var koeff = ests[0]/ders[0];
             for (int i = 0; i < ders.Length; i++)
             {
-                MyAssert.CloseTo(ests[i]/ders[i], koeff, 0.000001);
+                MyAssert.CloseTo(ests[i]/ders[i], koeff, 0.00001);
             }
-        }
-
-        [Test]
-        [Ignore]
-        public void TestRandomFunction()
-        {
-            NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 6, 6, 1 });
-            n.RandomizeWeights();
-            Random random = new Random();
-            double x;
-            double y;
-            double z;
-            for (int i = 0; i < 1000; i++)
-            {
-                x = random.NextDouble();
-                y = random.NextDouble();
-                z = some_function(x, y);
-                n.SetInput(new double[]{x, y});
-                n.SetAnswers(new double[]{z});
-                n.BackPropagate();
-                n.ApplyTraining(0.0001, 0.01);
-            }
-            //todo
         }
 
         public static double some_function(double x, double y)
