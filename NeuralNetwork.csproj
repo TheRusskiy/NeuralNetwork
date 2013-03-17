@@ -82,6 +82,7 @@
     <Compile Include="src\NetworkTrainer.cs" />
     <Compile Include="src\NNetwork.cs" />
     <Compile Include="src\Neuron.cs" />
+    <Compile Include="src\TanhNeuron.cs" />
     <Compile Include="test\BackPropTest.cs" />
     <Compile Include="test\MyAssert.cs" />
     <Compile Include="test\NetworkTest.cs" />

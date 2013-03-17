@@ -25,105 +25,107 @@ namespace NeuralNetwork
 
         public static void Main()
         {
-            Sinus();
+//            Sinus();
         }
 
-        public static void M1()
-        {
-            GoogleParser parser = new GoogleParser();
-            double[] initial_values = parser.GetDeltas(parser.ParseFile(path_cola));
-            DataNormalizer normalizer = new DataNormalizer(initial_values);
-            double[] normalized_values = normalizer.GetValues();
-            NNetwork network = new NNetwork(new int[]{8, 8, 8, 3});
-//            for(int i=0; )
-        }
-
-        public static void Cosinus()
-        {
-            NNetwork network = new NNetwork(new int[] { 1, 2, 1 });
-            network.RandomizeWeights(0, 10);
-            double[] inputs = SinusTrainSet()[0];
-            double[] outputs = SinusTrainSet()[1];
-            DataNormalizer input_normalizer = new DataNormalizer(inputs);
-            DataNormalizer output_normalizer = new DataNormalizer(outputs);
-            double[] n_inputs = input_normalizer.GetValues();
-            double[] n_outputs = output_normalizer.GetValues();
-            int max_j = 10000;
-            for (int j = 0; j < max_j; j++)
-            {
-                for (int i = 0; i < n_inputs.Length; i++)
-                {
-                    int k = i;
-                    network.SetInput(new double[] { n_inputs[k] });
-                    network.SetAnswers(new double[] { n_outputs[k] });
-                    network.BackPropagate();
-                    if (j == 0)
-                    {
-                        Show(n_inputs[i], n_outputs[i]);
-                    }
-                }
-                network.ApplyTraining(0.0000, 0.01);
-                if (j < 10 || j%(max_j/10) == 0)
-                {
-                    Console.Out.WriteLine(network.AccumulatedCost());
-                }
-                network.ResetCost();
-                
-            }
-            Console.Out.WriteLine("AFTER");
-            for (int i = 0; i < n_inputs.Length; i++)
-            {
-                network.SetInput(new double[] { n_inputs[i] });
-                Show(n_inputs[i], network.GetOutput()[0]);
-            }
-        }
-
-        public static void Sinus()
-        {
-            NNetwork network = new NNetwork(new int[] { 1, 4, 1 });
-            network.RandomizeWeights(-1, 2);
-            double[] inputs = SinusTrainSet()[0];
-            double[] outputs = SinusTrainSet()[1];
-            DataNormalizer input_normalizer = new DataNormalizer(inputs);
-            DataNormalizer output_normalizer = new DataNormalizer(outputs);
-            double[] n_inputs = inputs;// input_normalizer.GetValues();
-            double[] n_outputs = outputs;// output_normalizer.GetValues();
-            int max_j = 10000;
-            double error = 1;
-            double delta = 1;
-            int j = 0;
-            for (; error > 0.01 && !(delta <= 0.0000001)||j==1; j++)
-//            for (int j = 0; j<max_j; j++)
-            {
-                for (int i = 0; i < n_inputs.Length; i++)
-                {
-                    int k = i;
-                    network.SetInput(new double[] {n_inputs[k]});
-                    network.SetAnswers(new double[] {n_outputs[k]});
-                    network.BackPropagate();
-                    if (j == 0)
-                    {
-                        Show(n_inputs[i], n_outputs[i]);
-                    }
-                }
-                if (j%(max_j/10) == 0)
-                {
+//        public static void M1()
+//        {
+//            GoogleParser parser = new GoogleParser();
+//            double[] initial_values = parser.GetDeltas(parser.ParseFile(path_cola));
+//            DataNormalizer normalizer = new DataNormalizer(initial_values);
+//            double[] normalized_values = normalizer.GetValues();
+//            NNetwork network = new NNetwork(new int[]{8, 8, 8, 3});
+////            for(int i=0; )
+//        }
+//
+//        public static void Cosinus()
+//        {
+//            NNetwork network = new NNetwork(new int[] { 1, 2, 1 });
+//            network.RandomizeWeights(0, 10);
+//            double[] inputs = SinusTrainSet()[0];
+//            double[] outputs = SinusTrainSet()[1];
+//            DataNormalizer input_normalizer = new DataNormalizer(inputs);
+//            DataNormalizer output_normalizer = new DataNormalizer(outputs);
+//            double[] n_inputs = input_normalizer.GetValues();
+//            double[] n_outputs = output_normalizer.GetValues();
+//            int max_j = 10000;
+//            for (int j = 0; j < max_j; j++)
+//            {
+//                for (int i = 0; i < n_inputs.Length; i++)
+//                {
+//                    int k = i;
+//                    network.SetInput(new double[] { n_inputs[k] });
+//                    network.SetAnswers(new double[] { n_outputs[k] });
+//                    network.BackPropagate();
+//                    if (j == 0)
+//                    {
+//                        Show(n_inputs[i], n_outputs[i]);
+//                    }
+//                }
+//                network.ApplyTraining(0.0000, 0.01);
+//                if (j < 10 || j%(max_j/10) == 0)
+//                {
 //                    Console.Out.WriteLine(network.AccumulatedCost());
-                }
-                double new_cost = network.AccumulatedCost();
-                delta = error - new_cost;
-                error = new_cost;
-                network.ResetCost();
-                network.ApplyTraining(0.0000, 1);
-            }
-            Console.Out.WriteLine(j+", Error: "+error+", delta: "+delta);
-            Console.Out.WriteLine("AFTER");
-            for (int i = 0; i < n_inputs.Length; i++)
-            {
-                network.SetInput(new double[] { n_inputs[i] });
-                Show(n_inputs[i], network.GetOutput()[0]);
-            }
-        }
+//                }
+//                network.ResetCost();
+//                
+//            }
+//            Console.Out.WriteLine("AFTER");
+//            for (int i = 0; i < n_inputs.Length; i++)
+//            {
+//                network.SetInput(new double[] { n_inputs[i] });
+//                Show(n_inputs[i], network.GetOutput()[0]);
+//            }
+//        }
+//
+//        public static void Sinus()
+//        {
+//            NNetwork network = new NNetwork(new int[] { 1, 2, 1 });
+//            network.RandomizeWeights(3, 2);
+//            double[] inputs = SinusTrainSet()[0];
+//            double[] outputs = SinusTrainSet()[1];
+//            DataNormalizer input_normalizer = new DataNormalizer(inputs);
+//            DataNormalizer output_normalizer = new DataNormalizer(outputs);
+//            double[] n_inputs = inputs;// input_normalizer.GetValues();
+//            double[] n_outputs = outputs;// output_normalizer.GetValues();
+//            int max_j = 10000;
+//            double error = 1;
+//            double delta = 1;
+//            int j = 0;
+//            for (; error > 0.01 && !(delta <= 0.0000001)||j==1; j++)
+////            for (int j = 0; j<max_j; j++)
+//            {
+//                for (int i = 0; i < n_inputs.Length; i++)
+//                {
+//                    int k = i;
+//                    network.SetInput(new double[] {n_inputs[k]});
+//                    network.SetAnswers(new double[] {n_outputs[k]});
+//                    network.BackPropagate();
+//                    if (j == 0)
+//                    {
+//                        Show(n_inputs[i], n_outputs[i]);
+//                    }
+//                }
+//                if (j%(max_j/10) == 0)
+//                {
+////                    Console.Out.WriteLine(network.AccumulatedCost());
+//                }
+//                double new_cost = network.AccumulatedCost();
+//                delta = error - new_cost;
+//                error = new_cost;
+//                network.ResetCost();
+//                network.ApplyTraining(0.001, 2);
+//            }
+//            Console.Out.WriteLine(j+", Error: "+error+", delta: "+delta);
+//            Console.Out.WriteLine("AFTER");
+////            for (int i = 0; i < n_inputs.Length; i++)
+//            for (double i = -Math.PI/2.0; i < Math.PI/2.0;i=i+0.2)
+//            {
+////                network.SetInput(new double[] { n_inputs[i] });
+//                network.SetInput(new double[] { i });
+//                Show(i, network.GetOutput()[0]);
+//            }
+//        }
 
         private static void Show(double x1, double x2)
         {

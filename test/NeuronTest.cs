@@ -141,6 +141,42 @@ namespace NeuralNetwork.test
             Assert.AreEqual(neuron.IsCachingActivationResults, true);
         }
 
+        [Test]
+        public void TanhActivation()
+        {
+            TanhNeuron tn = new TanhNeuron();
+            BiasNeuron bias = new BiasNeuron();
+            double w0 = 0;
+            tn.Connect(bias, w0);
+
+            Assert.Throws(typeof(NotConfiguredException),
+                          () => tn.Activation());
+            InputNeuron i1 = new InputNeuron();
+            InputNeuron i2 = new InputNeuron();
+            InputNeuron i3 = new InputNeuron();
+
+            i1.Input = 1;
+            i2.Input = 1;
+            i3.Input = 1;
+
+            double w1 = 1;
+            double w2 = 1;
+            double w3 = 1;
+
+            tn.Connect(i1, w1);
+            tn.Connect(i2, w2);
+            tn.Connect(i3, w3);
+            double z = i1.Input * w1 + i2.Input * w2 + i3.Input * w3;
+            double expected_activation = (Math.Exp(z) - Math.Exp(-z)) / (Math.Exp(z) + Math.Exp(-z));
+            MyAssert.CloseTo(tn.Activation(), expected_activation);
+        }
+
+        [Test]
+        [Ignore]
+        public void TestTahnLearningOnSinus()
+        {
+            
+        }
     }
     
 }

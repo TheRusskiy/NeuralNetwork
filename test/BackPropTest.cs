@@ -230,6 +230,31 @@ namespace NeuralNetwork.test
 
         [Test]
         [Ignore]
+        public void TestTanhDerivative()
+        {
+            //TODO  make it tahn
+            NNetwork n = new NNetwork(new int[] { 2, 2, 1 });
+            n.RandomizeWeights(-1, 10);
+            Random random = new Random();
+            double x;
+            double y;
+            double z;
+            x = random.NextDouble();
+            y = random.NextDouble();
+            z = some_function(x, y);
+            n.SetInput(new double[] { x, y });
+            n.SetAnswers(new double[] { z });
+            n.BackPropagate();
+            double[] ders = n.Derivatives();
+            double[] ests = n.Estimation(0.0001);
+            for (int i = 0; i < ders.Length; i++)
+            {
+                MyAssert.CloseTo(ders[i], ests[i], 0.0001);
+            }
+        }
+
+        [Test]
+        [Ignore]
         public void TestRandomFunction()
         {
             NNetwork n = new NNetwork(new int[] { 2, 6, 6, 1 });

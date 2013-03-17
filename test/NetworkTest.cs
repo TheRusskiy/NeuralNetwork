@@ -204,6 +204,14 @@ namespace NeuralNetwork.test
             Assert.AreNotEqual(first, second);
         }
 
+        [Test]
+        [Ignore]
+        public void TestTanhNetwork()
+        {
+            NNetwork n = new NNetwork(new int[]{2,4,4,2});
+            //TODO factory!
+        }
+
         public static NNetwork XorNetwork()
         {
             double[] from_l1 = new double[] { -30, 20, 20, 10, -20, -20 };

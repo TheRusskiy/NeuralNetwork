@@ -14,8 +14,8 @@ namespace NeuralNetwork
         private bool cache_enabled;
         private bool cache_is_outdated = true;
         private double cached_activation;
-        private bool propagate_like_last_layer;
-        private double weight_x_delta_acc;
+        protected bool is_last_layer;
+        protected double weight_x_delta_acc;
         private bool acc_empty = true;
         private int iterations_count;
 
@@ -84,12 +84,10 @@ namespace NeuralNetwork
             weights[index] = value;
         }
 
-        private double Function()
+        protected virtual double Function()
         {
             double z = WeightsOnInputs();
-            double value = (Math.Exp(z) - Math.Exp(-z))/(Math.Exp(z) + Math.Exp(-z));
-            //TODO FUNCTION
-            //double value = 1/(1 + Math.Exp(-z));
+            double value = 1/(1 + Math.Exp(-z));
             return value;
         }
 
@@ -143,7 +141,7 @@ namespace NeuralNetwork
             return has_bias;
         }
 
-        private double WeightsOnInputs()
+        protected double WeightsOnInputs()
         {
             double acc = 0;
             for (int i = 0; i < weights.Count; i++)
@@ -156,7 +154,7 @@ namespace NeuralNetwork
         public void SetAnswer(double desired_answer)
         {
             this.desired_answer = desired_answer;
-            propagate_like_last_layer = true;
+            is_last_layer = true;
             acc_empty = false;
         }
 
@@ -179,12 +177,10 @@ namespace NeuralNetwork
             return desired_answer - Activation();
         }
 
-        private double CalculateMidLayerDelta()
+        protected virtual double CalculateMidLayerDelta()
         {
             double a = Activation();
-//            return weight_x_delta_acc*a*(1 - a);
-            return weight_x_delta_acc * (1 - a*a);
-            //TODO FUNCTION
+            return weight_x_delta_acc*a*(1 - a);
         }
 
         public void InvalidateActivationCache()
@@ -238,7 +234,7 @@ namespace NeuralNetwork
         private double CalculateDelta()
         {
             double result = 0;
-            if (propagate_like_last_layer)
+            if (is_last_layer)
             {
                 result = CalculateLastLayerDelta();
             }
@@ -284,8 +280,20 @@ namespace NeuralNetwork
         {
             return weight_shifts.ToArray();
         }
+
+        public virtual double LastLayerCost()
+        {
+            if (!is_last_layer)
+            {
+                throw new CannotCalculateCostForNonLastLayerNeuronException();
+            }
+            double h = Activation();
+            double y = GetAnswer();
+            return y * Math.Log(h) + (1 - y) * Math.Log(1 - h);
+        }
     }
 
+    internal class CannotCalculateCostForNonLastLayerNeuronException : Exception{}
     internal class CannotAccessDeltaBeforeBackpropHasBeenDone : Exception{}
     internal class CannotPropagateWithEmptyAcc : Exception{}
     internal class CannotConnectToSelfException : Exception{}
