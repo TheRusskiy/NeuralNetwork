@@ -26,9 +26,44 @@ namespace NeuralNetwork
 
         public static void Main()
         {
+            TrainPrediction();
 //            Sinus();
 //            TestTanhLearningOnSinus();
 //            TestTanhDerivative();
+        }
+
+        public static void TrainPrediction()
+        {
+            NNetwork network = NNetwork.HyperbolicNetwork(new int[] { 5, 2, 2, 2 });
+            network.RandomizeWeights(9, 2);
+            NetworkTrainer trainer = new NetworkTrainer(network);
+            List<double> tr = new List<double>();
+            for (double i = -1; i <= 1; i=i+0.1)
+            {
+                tr.Add(i);
+            }
+            double[] train_set = tr.ToArray();//new double[] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 };
+            double error = 1;
+            double delta = 1;
+            int j = 0;
+            for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
+            {
+                trainer.TrainPrediction(train_set, 0.0001, 0.1);
+                double new_cost = trainer.GetError();
+                delta = error - new_cost;
+                error = new_cost;
+            }
+            Console.Out.WriteLine(j+": "+error);
+            for (double i = -1; i <= 0.5; i=i+0.1)
+            {
+                network.SetInput(new double[] { i + 0.0, i + 0.1, i + 0.2, i + 0.3, i + 0.4 });
+                Show(new double[]
+                    {
+                        i+0.5,
+                        network.GetOutput()[0],
+                        network.GetOutput()[1]
+                    });
+            }
         }
 
         public static void TestTanhDerivative()
@@ -65,7 +100,7 @@ namespace NeuralNetwork
             int j = 0;
             for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
             {
-                trainer.TrainCalculation(inputs, outputs);
+                trainer.TrainClassification(inputs, outputs);
                 double new_cost = trainer.GetError();
                 delta = error - new_cost;
                 error = new_cost;
@@ -73,7 +108,7 @@ namespace NeuralNetwork
             double[][] input_test = SinusTrainSet(20)[0];
             double[][] output_test = SinusTrainSet(20)[1];
             trainer.IsLearning = false;
-            trainer.TrainCalculation(input_test, output_test);
+            trainer.TrainClassification(input_test, output_test);
             error = trainer.GetError();
             Console.Out.WriteLine(error);
             for (int i = 0; i < input_test.Length; i++ )

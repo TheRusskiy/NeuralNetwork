@@ -30,7 +30,7 @@ namespace NeuralNetwork.src
             //  abs(y) * log( abs(x) ) + (1 - abs(y)) * log (1 - abs(x)) + log(1 - abs(x - y))
             double h = Activation();
             double y = GetAnswer();
-            var addition =  Math.Log(1-Math.Abs(h - y));
+            double addition =  Math.Log(1+Math.Abs(h - y));
             h = Math.Abs(h);
             y = Math.Abs(y);
             return y * Math.Log(h) + (1 - y) * Math.Log(1 - h) + addition;

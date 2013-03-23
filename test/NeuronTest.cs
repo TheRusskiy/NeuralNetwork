@@ -184,7 +184,7 @@ namespace NeuralNetwork.test
             int j = 0;
             for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
             {
-                trainer.TrainCalculation(inputs, outputs);
+                trainer.TrainClassification(inputs, outputs);
                 double new_cost = trainer.GetError();
                 delta = error - new_cost;
                 error = new_cost;
@@ -192,7 +192,7 @@ namespace NeuralNetwork.test
             double[][] input_test = SinusTrainSet(20)[0];
             double[][] output_test = SinusTrainSet(20)[1];
             trainer.IsLearning = false;
-            trainer.TrainCalculation(input_test, output_test);
+            trainer.TrainClassification(input_test, output_test);
             error = trainer.GetError();
             Assert.Less(error, 0.53);
         }
