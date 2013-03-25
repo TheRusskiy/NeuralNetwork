@@ -11,34 +11,35 @@ namespace NeuralNetwork
 {
     static class Program
     {
-//        /// <summary>
-//        /// The main entry point for the application.
-//        /// </summary>
-//        [STAThread]
-//        static void Main()
-//        {
-//            Application.EnableVisualStyles();
-//            Application.SetCompatibleTextRenderingDefault(false);
-//            Application.Run(new Form1());
-//        }
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+        }
 
         private static String path_cola = Path.GetFullPath(@"./../../data/ko.csv");
 
-        public static void Main()
-        {
-            TrainPrediction();
-//            Sinus();
-//            TestTanhLearningOnSinus();
-//            TestTanhDerivative();
-        }
+//        public static void Main()
+//        {
+//            TrainPrediction();
+////            Sinus();
+////            TestTanhLearningOnSinus();
+////            TestTanhDerivative();
+//            
+//        }
 
         public static void TrainPrediction()
         {
-            NNetwork network = NNetwork.HyperbolicNetwork(new int[] { 5, 2, 2, 2 });
-            network.RandomizeWeights(9, 2);
+            NNetwork network = NNetwork.SigmoidNetwork(new int[] { 5, 1 });
+            network.RandomizeWeights(-1, 20);
             NetworkTrainer trainer = new NetworkTrainer(network);
             List<double> tr = new List<double>();
-            for (double i = -1; i <= 1; i=i+0.1)
+            for (double i = 0; i <= 1; i=i+0.05)
             {
                 tr.Add(i);
             }
@@ -46,22 +47,22 @@ namespace NeuralNetwork
             double error = 1;
             double delta = 1;
             int j = 0;
-            for (; error > 0.01 && !(delta <= 0.000001) || j == 1; j++)
+            for (; error > 0.01 && !(delta <= 0.00001) || j == 1; j++)
             {
-                trainer.TrainPrediction(train_set, 0.0001, 0.1);
+                trainer.TrainPrediction(train_set, 0.0001, 0.2);
                 double new_cost = trainer.GetError();
                 delta = error - new_cost;
                 error = new_cost;
             }
             Console.Out.WriteLine(j+": "+error);
-            for (double i = -1; i <= 0.5; i=i+0.1)
+            for (double i = 0; i <= 0.5; i=i+0.05)
             {
                 network.SetInput(new double[] { i + 0.0, i + 0.1, i + 0.2, i + 0.3, i + 0.4 });
                 Show(new double[]
                     {
                         i+0.5,
                         network.GetOutput()[0],
-                        network.GetOutput()[1]
+//                        network.GetOutput()[1]
                     });
             }
         }

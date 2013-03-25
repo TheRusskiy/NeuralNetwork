@@ -33,7 +33,8 @@ namespace NeuralNetwork.src
             double addition =  Math.Log(1+Math.Abs(h - y));
             h = Math.Abs(h);
             y = Math.Abs(y);
-            return y * Math.Log(h) + (1 - y) * Math.Log(1 - h) + addition;
+            var r = y * Math.Log(h) + (1 - y) * Math.Log(1 - h) - addition;
+            return -Math.Abs(r);
         }
     }
 }

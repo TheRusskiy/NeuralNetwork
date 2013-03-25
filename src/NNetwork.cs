@@ -288,6 +288,7 @@ namespace NeuralNetwork.src
             double result = random.NextDouble();
             result -= 0.5;
             result *= multiplier;
+//            result = result < 0 ? -multiplier : multiplier;
             return result;
         }
 
