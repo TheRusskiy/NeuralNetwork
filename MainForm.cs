@@ -8,11 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GraphLib;
+using NeuralNetwork.src;
 
 namespace NeuralNetwork
 {
     public partial class MainForm : Form
     {
+        private NNetwork network;
         public MainForm()
         {
             InitializeComponent();
@@ -62,6 +64,11 @@ namespace NeuralNetwork
         private String RenderYLabel(DataSource s, float value)
         {
             return String.Format("{0:0.0}", value);
+        }
+
+        private void buttonCreateNetwork_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
