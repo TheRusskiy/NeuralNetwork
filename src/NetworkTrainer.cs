@@ -73,6 +73,20 @@ namespace NeuralNetwork.src
             }
             if (_isLearning) network.ApplyTraining(lambda, alpha);
         }
+
+        public double[] GetPrediction(double[] data, int step)
+        {
+            //todo untested
+            int input_count = network.Neurons[0].Length - 1; //without bias
+            int output_count = network.Neurons[network.Neurons.Length - 1].Length - 1; //without bias
+            double[] output = new double[data.Length-input_count];
+            for (int i = 0; i < data.Length - input_count - output_count; i++)
+            {
+                network.SetInput(GetArrayRange(data, i, i + input_count));
+                output[i]=network.GetOutput()[step-1];
+            }
+            return output;
+        }
     }
 
     internal class NoErrorInfoYetException : Exception{}

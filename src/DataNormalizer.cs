@@ -18,7 +18,7 @@ namespace NeuralNetwork.src
             return new HyperbolicNormalizer(initial_values);
         }
 
-        public const double SAFE_KOEFF = 1.1;
+        public const double SAFE_KOEFF = 1.05;
         protected double min;
         protected double max;
         private double[] initial_values;

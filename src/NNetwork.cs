@@ -30,6 +30,16 @@ namespace NeuralNetwork.src
             SetNeuronsCaching(true);
         }
 
+        public int InputCount()
+        {
+            return this.Neurons[0].Length - 1; //without bias
+        }
+
+        public int OutputCount()
+        {
+            return this.Neurons[this.Neurons.Length - 1].Length - 1; //without bias
+        }
+
         private void CheckDimensions(int[] neuronsInLayersWithoutBias)
         {
             if (neuronsInLayersWithoutBias.Length <= 0)
