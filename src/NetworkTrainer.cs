@@ -90,6 +90,6 @@ namespace NeuralNetwork.src
     }
 
     internal class NoErrorInfoYetException : Exception{}
-    internal class IncorrectInputDimensionException : Exception { }
-    internal class IncorrectOutputDimensionException : Exception { }
+    internal class IncorrectInputDimensionException : Exception {}
+    internal class IncorrectOutputDimensionException : Exception {}
 }

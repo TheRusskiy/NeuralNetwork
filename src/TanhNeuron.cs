@@ -34,7 +34,8 @@ namespace NeuralNetwork.src
             h = Math.Abs(h);
             y = Math.Abs(y);
             var r = y * Math.Log(h) + (1 - y) * Math.Log(1 - h) - addition;
-            return -Math.Abs(r);
+            //return -Math.Abs(r); todo original <<
+            return y * Math.Log(h) + (1 - y) * Math.Log(1 - h);
         }
     }
 }

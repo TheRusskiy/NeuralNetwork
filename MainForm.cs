@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GraphLib;
 using NeuralNetwork.src;
+using System.Diagnostics;
 
 namespace NeuralNetwork
 {
@@ -28,32 +29,6 @@ namespace NeuralNetwork
         public MainForm()
         {
             InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            display.DataSources.Clear();
-            display.SetDisplayRangeX(0, 400);
-            display.DataSources.Add(new DataSource());
-            int j = 0;
-            display.DataSources[j].Name = "Graph " + (j + 1);
-            display.DataSources[j].OnRenderXAxisLabel += RenderXLabel;
-            this.Text = "Normal Graph";
-            display.DataSources[j].Length = 5800;
-            display.PanelLayout = PlotterGraphPaneEx.LayoutMode.NORMAL;
-            display.DataSources[j].AutoScaleY = false;
-            display.DataSources[j].SetDisplayRangeY(-300, 300);
-            display.DataSources[j].SetGridDistanceY(100);
-            display.DataSources[j].OnRenderYAxisLabel = RenderYLabel;
-
-            display.DataSources[j].Samples[0].x = 1;
-            display.DataSources[j].Samples[0].y = 2;
-            display.DataSources[j].Samples[1].x = 2;
-            display.DataSources[j].Samples[1].y = 200;
-            display.DataSources[j].Samples[1].x = 100;
-            display.DataSources[j].Samples[1].y = 200;
-            display.DataSources[j].GraphColor = Color.Crimson;
-            display.Refresh();
         }
 
         private String RenderXLabel(DataSource s, int idx)
@@ -96,6 +71,12 @@ namespace NeuralNetwork
                 is_hyperbolic = false;
                 is_sigmoid = true;
             }
+            bool two_steps = network.OutputCount() >= 2;
+            bool three_steps = network.OutputCount() >= 3;
+            checkTrain2.Enabled = two_steps;
+            checkTest2.Enabled = two_steps;
+            checkTrain3.Enabled = three_steps;
+            checkTest3.Enabled = three_steps;
             groupWeights.Enabled = true;
         }
 
@@ -119,6 +100,7 @@ namespace NeuralNetwork
 
         private void buttonTrain_Click(object sender, EventArgs e)
         {
+            groupPlotting.Enabled = false;
             trainer = new NetworkTrainer(network);
             double lambda = double.Parse(textLambda.Text);
             double alpha = double.Parse(textAlpha.Text);
@@ -127,22 +109,59 @@ namespace NeuralNetwork
             double delta = 1;
             double required_error = double.Parse(textErrorStop.Text);
             double required_delta = double.Parse(textDeltaStop.Text);
+            int time_limit = int.Parse(textStopTime.Text)*1000;
             int j = 0;
-            while(error > required_error && !(delta <= required_delta) || j == 1)
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Reset();
+            stopwatch.Start();
+//            while(error > required_error && (delta >= required_delta) || j == 1)
+            while (error > required_error && (delta >= 0) || j == 1)
             {
                 trainer.TrainPrediction(train_data, lambda, alpha);
-                double new_cost = trainer.GetError();
-                delta = error - new_cost;
-                error = new_cost;
+                double new_error = Math.Abs(trainer.GetError());
+                delta = error - new_error;
+                error = new_error;
                 j++;
+                if (stopwatch.ElapsedMilliseconds > time_limit) break;
             }
+            textError.Text = Math.Round(error, 5).ToString();
+            textTimes.Text = j.ToString();
+            groupPlotting.Enabled = true;
         }
 
 
         private void buttonPlot_Click(object sender, EventArgs e)
         {
-            float min_y=0;
-            float max_y=0;
+            DataSource prediction_source = PredictionSource(1);
+            DataSource initial_source = InitialSource();
+            DataSource test_source = TestSource(1);
+            display.DataSources.Clear();
+            int y_resolution = int.Parse(textYResolution.Text);
+            display.SetDisplayRangeX(0, y_resolution);
+            display.PanelLayout = PlotterGraphPaneEx.LayoutMode.NORMAL;
+
+            if (checkNetwork.Checked) AddDataSource(initial_source, Color.Crimson);
+            if (checkTrain.Checked) AddDataSource(prediction_source, Color.RoyalBlue);
+            if (checkTest.Checked) AddDataSource(test_source, Color.SeaGreen);
+            if (network.OutputCount() >= 2)
+            {
+                if (checkTrain2.Checked) AddDataSource(PredictionSource(2), Color.Blue);
+                if (checkTest2.Checked) AddDataSource(TestSource(2), Color.SeaGreen);
+            }
+            if (network.OutputCount() >= 3)
+            {
+                if (checkTrain3.Checked) AddDataSource(PredictionSource(3), Color.Cyan);
+                if (checkTest3.Checked) AddDataSource(TestSource(3), Color.SeaGreen);
+            }
+
+            display.Refresh();
+            display.PerformAutoScale();
+        }
+
+        private void AddDataSource(DataSource initial_source, Color color)
+        {
+            float min_y = 0;
+            float max_y = 0;
             if (is_sigmoid)
             {
                 min_y = 0;
@@ -153,61 +172,82 @@ namespace NeuralNetwork
                 min_y = -1;
                 max_y = 1;
             }
-            double[] prediction = trainer.GetPrediction(train_data, 1);
-            DataSource prediction_source = new DataSource();
-            prediction_source.Length = data.Length;
-
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (i < network.InputCount())
-                {
-                    prediction_source.Samples[i].x = i;
-                    prediction_source.Samples[i].y = 0.5f;
-                }
-                else if (i < network.InputCount()+prediction.Length)
-                {
-                    prediction_source.Samples[i].x = i;
-                    prediction_source.Samples[i].y = (float)prediction[i-network.InputCount()];
-                }
-                else
-                {
-                    prediction_source.Samples[i].x = i;
-                    prediction_source.Samples[i].y = 0.5f;
-                }
-            }
-
-            DataSource initial_source = new DataSource();
-            initial_source.Length = data.Length;
-            for (int i = 0; i < data.Length; i++)
-            {
-                initial_source.Samples[i].x = i;
-                initial_source.Samples[i].y = (float)data[i];
-            }
-            display.DataSources.Clear();
-            display.SetDisplayRangeX(0, 400);
-            display.PanelLayout = PlotterGraphPaneEx.LayoutMode.NORMAL;
-
             display.DataSources.Add(initial_source);
             initial_source.AutoScaleY = false;
             initial_source.SetGridDistanceY(100);
             initial_source.OnRenderYAxisLabel = RenderYLabel;
-            initial_source.GraphColor = Color.Crimson;
+            initial_source.GraphColor = color;
 //            initial_source.AutoScaleY = true;
             initial_source.SetDisplayRangeY(min_y, max_y);
             initial_source.XAutoScaleOffset = 0;
+        }
 
-            display.DataSources.Add(prediction_source);
-            prediction_source.AutoScaleY = false;
-            prediction_source.SetGridDistanceY(100);
-            prediction_source.OnRenderYAxisLabel = RenderYLabel;
-            prediction_source.GraphColor = Color.RoyalBlue;
-//            prediction_source.AutoScaleY = true;
-            prediction_source.SetDisplayRangeY(min_y, max_y);
-            prediction_source.XAutoScaleOffset = 0;
+        private DataSource PredictionSource(int step)
+        {
+            double[] prediction = trainer.GetPrediction(train_data, step);
+            DataSource prediction_source = new DataSource();
+            prediction_source.Length = data.Length;
 
+            float acc = 0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (i < network.InputCount() + step - 1)
+                {
+//                    prediction_source.Samples[i].x = i;
+//                    prediction_source.Samples[i].y = 0.5f;
+                    prediction_source.Samples[i].x = 0;
+                    prediction_source.Samples[i].y = 0;
+                }
+                else if (i < network.InputCount() + prediction.Length + step - 1)
+                {
+                    prediction_source.Samples[i].x = i;
+                    prediction_source.Samples[i].y = (float) prediction[i - network.InputCount() - step + 1];
+//                    acc += (float) normalizer.Denormalize(prediction[i - network.InputCount()]);
+//                    prediction_source.Samples[i].y = acc;
+                }
+                else
+                {
+                    prediction_source.Samples[i].x = 0;
+                    prediction_source.Samples[i].y = 0;
+                }
+            }
+            return prediction_source;
+        }
 
-            display.Refresh();
-            display.PerformAutoScale();
+        private DataSource TestSource(int step)
+        {
+            double[] prediction_on_test = trainer.GetPrediction(test_data, step);
+            DataSource prediction_source = new DataSource();
+            prediction_source.Length = data.Length;
+
+            float acc = 0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (i < network.InputCount() + train_data.Length + step - 1)
+                {
+                    prediction_source.Samples[i].x = 0;
+                    prediction_source.Samples[i].y = 0;
+                }
+                else
+                {
+                    prediction_source.Samples[i].x = i;
+                    prediction_source.Samples[i].y = (float)prediction_on_test[i - network.InputCount() - train_data.Length - step + 1];
+                }
+            }
+            return prediction_source;
+        }
+
+        private DataSource InitialSource()
+        {
+            DataSource initial_source;
+            initial_source = new DataSource();
+            initial_source.Length = data.Length;
+            for (int i = 0; i < data.Length; i++)
+            {
+                initial_source.Samples[i].x = i;
+                initial_source.Samples[i].y = (float) data[i];
+            }
+            return initial_source;
         }
 
         private void AssignData()
