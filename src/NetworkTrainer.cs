@@ -37,7 +37,8 @@ namespace NeuralNetwork.src
                 CalculateError();
                 network.BackPropagate();
             }
-            if (_isLearning) network.ApplyTraining(lambda, alpha);
+            if (_isLearning) {network.ApplyTraining(lambda, alpha);}
+            else { network.ResetTraining();}
         }
 
         private double[] GetArrayRange(double[] array, int from, int to_exclusive)

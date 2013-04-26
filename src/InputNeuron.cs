@@ -70,6 +70,11 @@ namespace NeuralNetwork
         {
             //do nothing
         }
+
+        public void ResetTrainAcc()
+        {
+            //do nothing
+        }
     }
 
     internal class NotConfiguredException : Exception

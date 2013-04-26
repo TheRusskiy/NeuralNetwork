@@ -360,6 +360,17 @@ namespace NeuralNetwork.src
             }
         }
 
+        public void ResetTraining()
+        {
+            for (int layer = LayerCount - 1; layer >= 1; layer--)
+            {
+                for (int neuron = 0; neuron < neurons[layer].Length; neuron++)
+                {
+                    neurons[layer][neuron].ResetTrainAcc();
+                }
+            }
+        }
+
         /// <summary>
         /// ! Invalidates Cache !
         /// </summary>

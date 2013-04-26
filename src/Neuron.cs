@@ -251,6 +251,15 @@ namespace NeuralNetwork
             acc_empty = false;
         }
 
+        public void ResetTrainAcc()
+        {
+            for (int i = 0; i < weights.Count; i++)
+            {
+                weight_shifts[i] = 0;
+            }
+            iterations_count = 0;
+        }
+
         public void ApplyTraining(double lambda, double alpha)
         {
             double[] ders = Derivatives(lambda);

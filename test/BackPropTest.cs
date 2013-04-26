@@ -208,6 +208,7 @@ namespace NeuralNetwork.test
         [Test]
         public void TestDerivative()
         {
+            //Fails with square error function
             NNetwork n = NNetwork.SigmoidNetwork(new int[] { 2, 2, 1 });
             n.RandomizeWeights(-1, 10);
             Random random = new Random();

@@ -54,6 +54,11 @@ namespace NeuralNetwork.src
         {
             //do nothing
         }
+
+        public void ResetTrainAcc()
+        {
+            //do nothing
+        }
     }
 
     internal class OperationNotPossibleForBiasException : Exception

@@ -13,5 +13,6 @@
         void PropagateBackwards();
         void AddWeightAndDelta(double weight, double delta);
         void ApplyTraining(double lambda, double alpha);
+        void ResetTrainAcc();
     }
 }
