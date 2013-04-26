@@ -8,14 +8,20 @@ namespace NeuralNetwork.src
 {
     class NNetwork
     {
-        private bool is_sigmoid;
+        private bool is_logarithmic;
+        private bool is_combined;
         public static NNetwork SigmoidNetwork(int[] neurons_in_layers_without_bias)
         {
-            return new NNetwork(neurons_in_layers_without_bias, "sigmoid");
+            return new NNetwork(neurons_in_layers_without_bias, "logarithmic");
         }
         public static NNetwork HyperbolicNetwork(int[] neurons_in_layers_without_bias)
         {
             return new NNetwork(neurons_in_layers_without_bias, "hyperbolic");
+        }
+
+        public static NNetwork CombinedNetwork(int[] neurons_in_layers_without_bias)
+        {
+            return new NNetwork(neurons_in_layers_without_bias, "combined");
         }
 
         private INeuron[][] neurons;
@@ -24,7 +30,8 @@ namespace NeuralNetwork.src
 
         private NNetwork(int[] neurons_in_layers_without_bias, string type)
         {
-            is_sigmoid = type.Equals("sigmoid");
+            is_logarithmic = type.Equals("logarithmic") || type.Equals("combined");
+            is_combined = type.Equals("combined");
             CheckDimensions(neurons_in_layers_without_bias);
             ConstructNetwork(neurons_in_layers_without_bias);
             SetNeuronsCaching(true);
@@ -96,9 +103,13 @@ namespace NeuralNetwork.src
                     {
                         nn = new InputNeuron();
                     }
-                    else
+                    else if (layer == LayerCount - 2)
                     {
                         nn = CreateNeuron();
+                    }
+                    else
+                    {
+                        nn = is_combined ? new TanhNeuron() : new Neuron();
                     }
                 }
                 neurons[layer][i] = nn;
@@ -304,7 +315,7 @@ namespace NeuralNetwork.src
 
         private Neuron CreateNeuron()
         {
-            if (is_sigmoid)
+            if (is_logarithmic)
             {
                 return new Neuron();
             }

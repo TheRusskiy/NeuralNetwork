@@ -71,6 +71,12 @@ namespace NeuralNetwork
                 is_hyperbolic = false;
                 is_sigmoid = true;
             }
+            if (radioCombined.Checked)
+            {
+                network = NNetwork.CombinedNetwork(layers);
+                is_hyperbolic = false;
+                is_sigmoid = true;
+            }
             bool two_steps = network.OutputCount() >= 2;
             bool three_steps = network.OutputCount() >= 3;
             checkTrain2.Enabled = two_steps;
@@ -90,9 +96,16 @@ namespace NeuralNetwork
         private void buttonLoadData_Click(object sender, EventArgs e)
         {
             openDataFile.ShowDialog();
-            data = parser.GetDeltas(
-                parser.ParseFile(openDataFile.FileName)
-                );
+            if (radioRelative.Checked)
+            {
+                data = parser.GetDeltas(
+                    parser.ParseFile(openDataFile.FileName)
+                    );
+            }
+            else
+            {
+                data = parser.ParseFile(openDataFile.FileName);
+            }
             normalizer = is_sigmoid ? DataNormalizer.SigmoidNormalizer(data) : DataNormalizer.HyperbolicNormalizer(data);
             data = normalizer.GetValues();
             groupTraining.Enabled = true;
@@ -125,8 +138,19 @@ namespace NeuralNetwork
                 if (stopwatch.ElapsedMilliseconds > time_limit) break;
             }
             textError.Text = Math.Round(error, 5).ToString();
+            Double control_error = GetControlError(trainer, lambda, alpha);
+            textControlError.Text = Math.Round(control_error, 5).ToString();
             textTimes.Text = j.ToString();
             groupPlotting.Enabled = true;
+        }
+
+        private double GetControlError(NetworkTrainer networkTrainer, double lambda, double alpha)
+        {
+            networkTrainer.IsLearning = false;
+            networkTrainer.TrainPrediction(test_data, lambda, alpha);
+            double error = Math.Abs(trainer.GetError());
+            networkTrainer.IsLearning = true;
+            return error;
         }
 
 

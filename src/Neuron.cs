@@ -289,7 +289,8 @@ namespace NeuralNetwork
             }
             double h = Activation();
             double y = GetAnswer();
-            return y * Math.Log(h) + (1 - y) * Math.Log(1 - h);
+//            return y * Math.Log(h) + (1 - y) * Math.Log(1 - h);
+            return (h-y)*(h-y);
         }
     }
 

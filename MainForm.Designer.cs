@@ -46,6 +46,8 @@ namespace NeuralNetwork
             this.buttonSetWeights = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupTraining = new System.Windows.Forms.GroupBox();
+            this.textStopTime = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.textTimes = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.numericTrainPercent = new System.Windows.Forms.NumericUpDown();
@@ -61,6 +63,12 @@ namespace NeuralNetwork
             this.label3 = new System.Windows.Forms.Label();
             this.buttonTrain = new System.Windows.Forms.Button();
             this.groupPlotting = new System.Windows.Forms.GroupBox();
+            this.textYResolution = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.checkTest3 = new System.Windows.Forms.CheckBox();
+            this.checkTrain3 = new System.Windows.Forms.CheckBox();
+            this.checkTest2 = new System.Windows.Forms.CheckBox();
+            this.checkTrain2 = new System.Windows.Forms.CheckBox();
             this.buttonPlot = new System.Windows.Forms.Button();
             this.checkNetwork = new System.Windows.Forms.CheckBox();
             this.checkTest = new System.Windows.Forms.CheckBox();
@@ -70,14 +78,11 @@ namespace NeuralNetwork
             this.colorTrain = new System.Windows.Forms.ColorDialog();
             this.colorNetwork = new System.Windows.Forms.ColorDialog();
             this.openDataFile = new System.Windows.Forms.OpenFileDialog();
-            this.textStopTime = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.checkTest2 = new System.Windows.Forms.CheckBox();
-            this.checkTrain2 = new System.Windows.Forms.CheckBox();
-            this.checkTest3 = new System.Windows.Forms.CheckBox();
-            this.checkTrain3 = new System.Windows.Forms.CheckBox();
-            this.textYResolution = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.radioCombined = new System.Windows.Forms.RadioButton();
+            this.radioAbsolute = new System.Windows.Forms.RadioButton();
+            this.radioRelative = new System.Windows.Forms.RadioButton();
+            this.textControlError = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupNetwork.SuspendLayout();
             this.groupWeights.SuspendLayout();
             this.groupTraining.SuspendLayout();
@@ -99,12 +104,13 @@ namespace NeuralNetwork
             this.display.Name = "display";
             this.display.PlaySpeed = 0.5F;
             this.display.ShowMovingGrid = false;
-            this.display.Size = new System.Drawing.Size(1095, 548);
+            this.display.Size = new System.Drawing.Size(1066, 548);
             this.display.SolidGridColor = System.Drawing.Color.Blue;
             this.display.TabIndex = 1;
             // 
             // groupNetwork
             // 
+            this.groupNetwork.Controls.Add(this.radioCombined);
             this.groupNetwork.Controls.Add(this.buttonCreateNetwork);
             this.groupNetwork.Controls.Add(this.radioHyperbolic);
             this.groupNetwork.Controls.Add(this.radioSigmoid);
@@ -112,14 +118,14 @@ namespace NeuralNetwork
             this.groupNetwork.Controls.Add(this.textLayers);
             this.groupNetwork.Location = new System.Drawing.Point(12, 573);
             this.groupNetwork.Name = "groupNetwork";
-            this.groupNetwork.Size = new System.Drawing.Size(163, 111);
+            this.groupNetwork.Size = new System.Drawing.Size(163, 185);
             this.groupNetwork.TabIndex = 3;
             this.groupNetwork.TabStop = false;
             this.groupNetwork.Text = "Network structure";
             // 
             // buttonCreateNetwork
             // 
-            this.buttonCreateNetwork.Location = new System.Drawing.Point(9, 76);
+            this.buttonCreateNetwork.Location = new System.Drawing.Point(8, 118);
             this.buttonCreateNetwork.Name = "buttonCreateNetwork";
             this.buttonCreateNetwork.Size = new System.Drawing.Size(138, 23);
             this.buttonCreateNetwork.TabIndex = 4;
@@ -130,7 +136,7 @@ namespace NeuralNetwork
             // radioHyperbolic
             // 
             this.radioHyperbolic.AutoSize = true;
-            this.radioHyperbolic.Location = new System.Drawing.Point(77, 20);
+            this.radioHyperbolic.Location = new System.Drawing.Point(10, 42);
             this.radioHyperbolic.Name = "radioHyperbolic";
             this.radioHyperbolic.Size = new System.Drawing.Size(75, 17);
             this.radioHyperbolic.TabIndex = 3;
@@ -143,16 +149,15 @@ namespace NeuralNetwork
             this.radioSigmoid.Checked = true;
             this.radioSigmoid.Location = new System.Drawing.Point(9, 20);
             this.radioSigmoid.Name = "radioSigmoid";
-            this.radioSigmoid.Size = new System.Drawing.Size(62, 17);
+            this.radioSigmoid.Size = new System.Drawing.Size(79, 17);
             this.radioSigmoid.TabIndex = 2;
-            this.radioSigmoid.TabStop = true;
-            this.radioSigmoid.Text = "Sigmoid";
+            this.radioSigmoid.Text = "Logarithmic";
             this.radioSigmoid.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 52);
+            this.label1.Location = new System.Drawing.Point(5, 94);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 1;
@@ -160,7 +165,7 @@ namespace NeuralNetwork
             // 
             // textLayers
             // 
-            this.textLayers.Location = new System.Drawing.Point(47, 49);
+            this.textLayers.Location = new System.Drawing.Point(46, 91);
             this.textLayers.Name = "textLayers";
             this.textLayers.Size = new System.Drawing.Size(100, 20);
             this.textLayers.TabIndex = 0;
@@ -217,6 +222,7 @@ namespace NeuralNetwork
             this.buttonGetWeights.TabIndex = 9;
             this.buttonGetWeights.Text = "Get weights";
             this.buttonGetWeights.UseVisualStyleBackColor = true;
+            this.buttonGetWeights.Visible = false;
             // 
             // buttonSetWeights
             // 
@@ -226,6 +232,7 @@ namespace NeuralNetwork
             this.buttonSetWeights.TabIndex = 8;
             this.buttonSetWeights.Text = "Set weights";
             this.buttonSetWeights.UseVisualStyleBackColor = true;
+            this.buttonSetWeights.Visible = false;
             // 
             // textBox2
             // 
@@ -233,9 +240,12 @@ namespace NeuralNetwork
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(156, 20);
             this.textBox2.TabIndex = 7;
+            this.textBox2.Visible = false;
             // 
             // groupTraining
             // 
+            this.groupTraining.Controls.Add(this.textControlError);
+            this.groupTraining.Controls.Add(this.label11);
             this.groupTraining.Controls.Add(this.textStopTime);
             this.groupTraining.Controls.Add(this.label9);
             this.groupTraining.Controls.Add(this.textTimes);
@@ -255,14 +265,31 @@ namespace NeuralNetwork
             this.groupTraining.Enabled = false;
             this.groupTraining.Location = new System.Drawing.Point(480, 573);
             this.groupTraining.Name = "groupTraining";
-            this.groupTraining.Size = new System.Drawing.Size(183, 191);
+            this.groupTraining.Size = new System.Drawing.Size(223, 219);
             this.groupTraining.TabIndex = 5;
             this.groupTraining.TabStop = false;
             this.groupTraining.Text = "Training";
             // 
+            // textStopTime
+            // 
+            this.textStopTime.Location = new System.Drawing.Point(80, 117);
+            this.textStopTime.Name = "textStopTime";
+            this.textStopTime.Size = new System.Drawing.Size(51, 20);
+            this.textStopTime.TabIndex = 13;
+            this.textStopTime.Text = "10";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(4, 120);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(77, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Stop on time(s)";
+            // 
             // textTimes
             // 
-            this.textTimes.Location = new System.Drawing.Point(136, 169);
+            this.textTimes.Location = new System.Drawing.Point(9, 188);
             this.textTimes.Name = "textTimes";
             this.textTimes.ReadOnly = true;
             this.textTimes.Size = new System.Drawing.Size(41, 20);
@@ -271,7 +298,7 @@ namespace NeuralNetwork
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(96, 172);
+            this.label8.Location = new System.Drawing.Point(6, 172);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 10;
@@ -296,7 +323,7 @@ namespace NeuralNetwork
             // 
             // textError
             // 
-            this.textError.Location = new System.Drawing.Point(44, 169);
+            this.textError.Location = new System.Drawing.Point(62, 188);
             this.textError.Name = "textError";
             this.textError.ReadOnly = true;
             this.textError.Size = new System.Drawing.Size(51, 20);
@@ -305,11 +332,11 @@ namespace NeuralNetwork
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 172);
+            this.label7.Location = new System.Drawing.Point(59, 172);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(29, 13);
+            this.label7.Size = new System.Drawing.Size(72, 13);
             this.label7.TabIndex = 7;
-            this.label7.Text = "Error";
+            this.label7.Text = "Train set error";
             // 
             // textDeltaStop
             // 
@@ -402,12 +429,73 @@ namespace NeuralNetwork
             this.groupPlotting.Controls.Add(this.checkTest);
             this.groupPlotting.Controls.Add(this.checkTrain);
             this.groupPlotting.Enabled = false;
-            this.groupPlotting.Location = new System.Drawing.Point(669, 573);
+            this.groupPlotting.Location = new System.Drawing.Point(724, 573);
             this.groupPlotting.Name = "groupPlotting";
             this.groupPlotting.Size = new System.Drawing.Size(291, 128);
             this.groupPlotting.TabIndex = 6;
             this.groupPlotting.TabStop = false;
             this.groupPlotting.Text = "Plotting";
+            // 
+            // textYResolution
+            // 
+            this.textYResolution.Location = new System.Drawing.Point(160, 99);
+            this.textYResolution.Name = "textYResolution";
+            this.textYResolution.Size = new System.Drawing.Size(51, 20);
+            this.textYResolution.TabIndex = 15;
+            this.textYResolution.Text = "200";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(92, 102);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(62, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Y resolution";
+            // 
+            // checkTest3
+            // 
+            this.checkTest3.AutoSize = true;
+            this.checkTest3.Enabled = false;
+            this.checkTest3.Location = new System.Drawing.Point(187, 52);
+            this.checkTest3.Name = "checkTest3";
+            this.checkTest3.Size = new System.Drawing.Size(79, 17);
+            this.checkTest3.TabIndex = 9;
+            this.checkTest3.Text = "Test step 3";
+            this.checkTest3.UseVisualStyleBackColor = true;
+            // 
+            // checkTrain3
+            // 
+            this.checkTrain3.AutoSize = true;
+            this.checkTrain3.Enabled = false;
+            this.checkTrain3.Location = new System.Drawing.Point(187, 26);
+            this.checkTrain3.Name = "checkTrain3";
+            this.checkTrain3.Size = new System.Drawing.Size(82, 17);
+            this.checkTrain3.TabIndex = 8;
+            this.checkTrain3.Text = "Train step 3";
+            this.checkTrain3.UseVisualStyleBackColor = true;
+            // 
+            // checkTest2
+            // 
+            this.checkTest2.AutoSize = true;
+            this.checkTest2.Enabled = false;
+            this.checkTest2.Location = new System.Drawing.Point(98, 52);
+            this.checkTest2.Name = "checkTest2";
+            this.checkTest2.Size = new System.Drawing.Size(79, 17);
+            this.checkTest2.TabIndex = 7;
+            this.checkTest2.Text = "Test step 2";
+            this.checkTest2.UseVisualStyleBackColor = true;
+            // 
+            // checkTrain2
+            // 
+            this.checkTrain2.AutoSize = true;
+            this.checkTrain2.Enabled = false;
+            this.checkTrain2.Location = new System.Drawing.Point(95, 27);
+            this.checkTrain2.Name = "checkTrain2";
+            this.checkTrain2.Size = new System.Drawing.Size(82, 17);
+            this.checkTrain2.TabIndex = 6;
+            this.checkTrain2.Text = "Train step 2";
+            this.checkTrain2.UseVisualStyleBackColor = true;
             // 
             // buttonPlot
             // 
@@ -457,6 +545,8 @@ namespace NeuralNetwork
             // 
             // groupData
             // 
+            this.groupData.Controls.Add(this.radioAbsolute);
+            this.groupData.Controls.Add(this.radioRelative);
             this.groupData.Controls.Add(this.buttonLoadData);
             this.groupData.Enabled = false;
             this.groupData.Location = new System.Drawing.Point(361, 573);
@@ -480,89 +570,59 @@ namespace NeuralNetwork
             // 
             this.openDataFile.FileName = "openFileDialog1";
             // 
-            // textStopTime
+            // radioCombined
             // 
-            this.textStopTime.Location = new System.Drawing.Point(80, 117);
-            this.textStopTime.Name = "textStopTime";
-            this.textStopTime.Size = new System.Drawing.Size(51, 20);
-            this.textStopTime.TabIndex = 13;
-            this.textStopTime.Text = "10";
+            this.radioCombined.AutoSize = true;
+            this.radioCombined.Location = new System.Drawing.Point(10, 65);
+            this.radioCombined.Name = "radioCombined";
+            this.radioCombined.Size = new System.Drawing.Size(72, 17);
+            this.radioCombined.TabIndex = 5;
+            this.radioCombined.Text = "Combined";
+            this.radioCombined.UseVisualStyleBackColor = true;
             // 
-            // label9
+            // radioAbsolute
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(4, 120);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(77, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "Stop on time(s)";
+            this.radioAbsolute.AutoSize = true;
+            this.radioAbsolute.Location = new System.Drawing.Point(7, 74);
+            this.radioAbsolute.Name = "radioAbsolute";
+            this.radioAbsolute.Size = new System.Drawing.Size(66, 17);
+            this.radioAbsolute.TabIndex = 5;
+            this.radioAbsolute.Text = "Absolute";
+            this.radioAbsolute.UseVisualStyleBackColor = true;
             // 
-            // checkTest2
+            // radioRelative
             // 
-            this.checkTest2.AutoSize = true;
-            this.checkTest2.Enabled = false;
-            this.checkTest2.Location = new System.Drawing.Point(98, 52);
-            this.checkTest2.Name = "checkTest2";
-            this.checkTest2.Size = new System.Drawing.Size(79, 17);
-            this.checkTest2.TabIndex = 7;
-            this.checkTest2.Text = "Test step 2";
-            this.checkTest2.UseVisualStyleBackColor = true;
+            this.radioRelative.AutoSize = true;
+            this.radioRelative.Checked = true;
+            this.radioRelative.Location = new System.Drawing.Point(6, 52);
+            this.radioRelative.Name = "radioRelative";
+            this.radioRelative.Size = new System.Drawing.Size(64, 17);
+            this.radioRelative.TabIndex = 4;
+            this.radioRelative.Text = "Relative";
+            this.radioRelative.UseVisualStyleBackColor = true;
             // 
-            // checkTrain2
+            // textControlError
             // 
-            this.checkTrain2.AutoSize = true;
-            this.checkTrain2.Enabled = false;
-            this.checkTrain2.Location = new System.Drawing.Point(95, 27);
-            this.checkTrain2.Name = "checkTrain2";
-            this.checkTrain2.Size = new System.Drawing.Size(82, 17);
-            this.checkTrain2.TabIndex = 6;
-            this.checkTrain2.Text = "Train step 2";
-            this.checkTrain2.UseVisualStyleBackColor = true;
+            this.textControlError.Location = new System.Drawing.Point(140, 188);
+            this.textControlError.Name = "textControlError";
+            this.textControlError.ReadOnly = true;
+            this.textControlError.Size = new System.Drawing.Size(51, 20);
+            this.textControlError.TabIndex = 15;
             // 
-            // checkTest3
+            // label11
             // 
-            this.checkTest3.AutoSize = true;
-            this.checkTest3.Enabled = false;
-            this.checkTest3.Location = new System.Drawing.Point(187, 52);
-            this.checkTest3.Name = "checkTest3";
-            this.checkTest3.Size = new System.Drawing.Size(79, 17);
-            this.checkTest3.TabIndex = 9;
-            this.checkTest3.Text = "Test step 3";
-            this.checkTest3.UseVisualStyleBackColor = true;
-            // 
-            // checkTrain3
-            // 
-            this.checkTrain3.AutoSize = true;
-            this.checkTrain3.Enabled = false;
-            this.checkTrain3.Location = new System.Drawing.Point(187, 26);
-            this.checkTrain3.Name = "checkTrain3";
-            this.checkTrain3.Size = new System.Drawing.Size(82, 17);
-            this.checkTrain3.TabIndex = 8;
-            this.checkTrain3.Text = "Train step 3";
-            this.checkTrain3.UseVisualStyleBackColor = true;
-            // 
-            // textYResolution
-            // 
-            this.textYResolution.Location = new System.Drawing.Point(160, 99);
-            this.textYResolution.Name = "textYResolution";
-            this.textYResolution.Size = new System.Drawing.Size(51, 20);
-            this.textYResolution.TabIndex = 15;
-            this.textYResolution.Text = "200";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(92, 102);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(62, 13);
-            this.label10.TabIndex = 14;
-            this.label10.Text = "Y resolution";
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(137, 172);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(81, 13);
+            this.label11.TabIndex = 14;
+            this.label11.Text = "Control set error";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1095, 779);
+            this.ClientSize = new System.Drawing.Size(1066, 795);
             this.Controls.Add(this.groupData);
             this.Controls.Add(this.groupPlotting);
             this.Controls.Add(this.groupTraining);
@@ -581,6 +641,7 @@ namespace NeuralNetwork
             this.groupPlotting.ResumeLayout(false);
             this.groupPlotting.PerformLayout();
             this.groupData.ResumeLayout(false);
+            this.groupData.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -633,6 +694,11 @@ namespace NeuralNetwork
         private System.Windows.Forms.CheckBox checkTrain2;
         private System.Windows.Forms.TextBox textYResolution;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.RadioButton radioCombined;
+        private System.Windows.Forms.RadioButton radioAbsolute;
+        private System.Windows.Forms.RadioButton radioRelative;
+        private System.Windows.Forms.TextBox textControlError;
+        private System.Windows.Forms.Label label11;
     }
 }
 
